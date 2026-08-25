@@ -22,10 +22,10 @@ class ShopSettingFactory extends Factory
             'deposit_percent' => 0,
             'labor_overhead_percent' => 15,
             'monthly_revenue_budget' => 50000000,
-            'business_name' => 'Bakeq Cakes',
+            'business_name' => 'Rushq cakes by Shashi',
             'business_address' => 'Colombo, Sri Lanka',
             'business_phone' => '0767681678',
-            'business_email' => 'hello@bakeq.test',
+            'business_email' => 'hello@rushqcakes.test',
         ];
     }
 }

@@ -8,7 +8,7 @@ use Livewire\Livewire;
 test('guests can view the login page', function () {
     $this->get(route('login'))
         ->assertOk()
-        ->assertSee('Sign in to Bakeq');
+        ->assertSee('Sign in to Rushq cakes');
 });
 
 test('users can register and are signed in', function () {

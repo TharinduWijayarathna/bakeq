@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\ShopSetting;
+use App\Support\Brand;
 use Illuminate\Support\Str;
 
 class GenerateInvoice
@@ -37,7 +38,7 @@ class GenerateInvoice
                 'line_total' => $item->unit_price * $item->quantity,
             ])->values()->all(),
             'business_snapshot' => [
-                'name' => $shop->business_name,
+                'name' => $shop->business_name ?: Brand::name(),
                 'address' => $shop->business_address,
                 'phone' => $shop->business_phone,
                 'email' => $shop->business_email,

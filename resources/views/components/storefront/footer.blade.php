@@ -16,9 +16,9 @@
         <x-storefront.social-links class="mt-8 justify-center" />
         <div class="mt-12 flex flex-col items-center gap-3 border-t border-card/40 pt-6 text-xs text-[color:var(--hero-deep)]/70 sm:flex-row sm:justify-between">
             <div class="flex items-center gap-2">
-                <img src="{{ asset('images/logo.png') }}" alt="Rushq cakes by Shashi" class="h-12 w-auto" loading="lazy" decoding="async">
+                <img src="{{ asset('images/logo.png') }}" alt="{{ $brandName }}" class="h-12 w-auto" loading="lazy" decoding="async">
             </div>
-            <span>&copy; {{ now()->year }} Bakeq. Baked with love.</span>
+            <span>&copy; {{ now()->year }} {{ $brandShortName }}. {{ $brandTagline }}.</span>
         </div>
     </div>
 </footer>

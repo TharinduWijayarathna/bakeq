@@ -13,7 +13,7 @@
                 <div class="relative flex min-h-[340px] items-center px-6 py-10 sm:min-h-[460px] sm:px-12 lg:min-h-[620px] lg:px-12 lg:py-16 xl:px-16">
                     <div class="absolute inset-0 dots-pattern opacity-30" aria-hidden="true"></div>
                     <div class="relative w-full max-w-2xl animate-hero-enter">
-                        <p class="font-script text-4xl text-primary-foreground/90 sm:text-5xl">Bakeq Cakes by Shashi</p>
+                        <p class="font-script text-4xl text-primary-foreground/90 sm:text-5xl">{{ $brandName }}</p>
                         <h1 class="mt-2 text-5xl leading-[0.92] text-[color:var(--hero-deep)] sm:text-6xl lg:text-7xl xl:text-8xl">
                             sweet cakes<br>made fresh
                         </h1>
@@ -110,7 +110,7 @@
         <div x-reveal.scale>
             <x-lazy-img
                 :src="asset('images/brand-banner.jpg')"
-                alt="Shashi of Rushq cakes, baked with love, made for you"
+                alt="{{ $brandName }}, {{ $brandTagline }}"
                 class="h-auto w-full rounded-4xl shadow-soft"
             />
         </div>
@@ -120,7 +120,7 @@
                 <p class="font-script text-3xl text-primary sm:text-4xl">About us</p>
                 <h2 class="mt-2 text-4xl sm:text-5xl lg:text-6xl">Baked with love in every layer</h2>
                 <p class="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                    Bakeq Cakes by Shashi is a home bakery built on family recipes, fresh ingredients and a love for celebrations. From custom birthday cakes to elegant wedding tiers, every cake is made to order and decorated by hand — so the cake on your table tastes as special as the moment it was made for.
+                    {{ $brandName }} is a home bakery built on family recipes, fresh ingredients and a love for celebrations. From custom birthday cakes to elegant wedding tiers, every cake is made to order and decorated by hand — so the cake on your table tastes as special as the moment it was made for.
                 </p>
             </div>
             <div class="mx-auto mt-12 grid max-w-5xl gap-5 sm:grid-cols-3" x-reveal.stagger>

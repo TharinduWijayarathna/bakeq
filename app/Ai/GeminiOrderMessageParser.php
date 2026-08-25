@@ -2,6 +2,7 @@
 
 namespace App\Ai;
 
+use App\Support\Brand;
 use Illuminate\Support\Arr;
 use Throwable;
 
@@ -119,11 +120,9 @@ class GeminiOrderMessageParser
 
     private function systemPrompt(): string
     {
-        return <<<'PROMPT'
-You extract cake order details from a raw customer message (WhatsApp, SMS, or email) for Bakeq, a Sri Lankan bakery.
+        return 'You extract cake order details from a raw customer message (WhatsApp, SMS, or email) for '.Brand::name().', a Sri Lankan bakery.
 Return ONLY a JSON object with these keys:
 occasion, flavor, servings, date, time, budget, style_notes, customer_name, phone
-Use null for unknown fields. Keep values short and plain. Dates as YYYY-MM-DD when clear, otherwise the phrasing given. Budget as a number string without currency symbols when possible.
-PROMPT;
+Use null for unknown fields. Keep values short and plain. Dates as YYYY-MM-DD when clear, otherwise the phrasing given. Budget as a number string without currency symbols when possible.';
     }
 }

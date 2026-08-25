@@ -1,6 +1,6 @@
 <div class="rounded-4xl bg-card p-8 shadow-sweet">
     <p class="font-script text-3xl text-primary">Welcome back</p>
-    <h1 class="mt-1 text-3xl">Sign in to Bakeq</h1>
+    <h1 class="mt-1 text-3xl">Sign in to {{ $brandShortName }}</h1>
 
     <form wire:submit="authenticate" class="mt-8 space-y-4">
         <div>

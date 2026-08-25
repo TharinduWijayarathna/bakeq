@@ -6,11 +6,9 @@ use App\Models\Cake;
 use App\Models\Testimonial;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
 #[Layout('layouts.storefront')]
-#[Title('Bakeq Cakes by Shashi')]
 class HomePage extends Component
 {
     public function render(): View
@@ -27,6 +25,6 @@ class HomePage extends Component
                 ->active()
                 ->ordered()
                 ->get(),
-        ]);
+        ])->title('Home');
     }
 }

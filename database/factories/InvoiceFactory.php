@@ -30,10 +30,10 @@ class InvoiceFactory extends Factory
                 ['name' => 'Classic Birthday Cake', 'quantity' => 1, 'unit_price' => 450000, 'line_total' => 450000],
             ],
             'business_snapshot' => [
-                'name' => 'Bakeq Cakes',
+                'name' => 'Rushq cakes by Shashi',
                 'address' => 'Colombo',
                 'phone' => '0767681678',
-                'email' => 'hello@bakeq.test',
+                'email' => 'hello@rushqcakes.test',
             ],
             'customer_snapshot' => [
                 'name' => 'Customer',

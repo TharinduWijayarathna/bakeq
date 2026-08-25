@@ -3,6 +3,7 @@
 namespace App\Ai;
 
 use App\Contracts\PromptCakeImageGenerator;
+use App\Support\Brand;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Throwable;
@@ -129,7 +130,7 @@ class GeminiPromptCakeImageGenerator implements PromptCakeImageGenerator
     private function systemInstruction(): string
     {
         return implode(' ', [
-            'You generate one photorealistic bakery product photograph for Bakeq, a Sri Lankan home bakery.',
+            'You generate one photorealistic bakery product photograph for '.Brand::name().', a Sri Lankan home bakery.',
             'Follow the customer request closely.',
             'If a reference image is attached, keep the same cake identity and only apply requested changes.',
             'No text, letters, logos, watermarks, people, or hands.',

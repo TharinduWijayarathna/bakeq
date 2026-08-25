@@ -1,5 +1,5 @@
 <div class="rounded-4xl bg-card p-8 shadow-sweet">
-    <p class="font-script text-3xl text-primary">Join Bakeq</p>
+    <p class="font-script text-3xl text-primary">Join {{ $brandShortName }}</p>
     <h1 class="mt-1 text-3xl">Create your account</h1>
 
     <form wire:submit="register" class="mt-8 space-y-4">

@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         User::query()->updateOrCreate(
             ['email' => 'admin@bakeq.test'],
             [
-                'name' => 'Bakeq Admin',
+                'name' => 'Rushq Admin',
                 'password' => 'password',
                 'phone' => '0770000000',
                 'address_line' => '12 Flower Road',

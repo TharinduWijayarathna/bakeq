@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $title ?? 'Admin' }} · Bakeq</title>
+        <title>{{ $title ?? 'Admin' }} · {{ $brandShortName }}</title>
         <x-favicons />
         @fonts
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -11,10 +11,11 @@
     <body class="admin-app min-h-screen bg-background text-foreground antialiased">
         <div class="flex min-h-screen">
             <aside class="hidden w-64 shrink-0 border-r border-border bg-card lg:flex lg:flex-col">
+                <div class="h-1.5 bg-gradient-sweet" aria-hidden="true"></div>
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-5 py-5">
                     <img src="{{ asset('images/logo-mark.png') }}" alt="" class="size-10 object-contain">
                     <div>
-                        <p class="font-display text-lg font-bold leading-tight">Bakeq</p>
+                        <p class="font-display text-lg font-bold leading-tight text-primary">{{ $brandShortName }}</p>
                         <p class="text-xs text-muted-foreground">{{ auth()->user()->role->label() }}</p>
                     </div>
                 </a>
@@ -88,7 +89,7 @@
             </aside>
             <div class="flex min-w-0 flex-1 flex-col">
                 <header class="flex items-center justify-between border-b border-border bg-card px-4 py-3 lg:px-8">
-                    <p class="font-display text-lg font-bold lg:hidden">Bakeq Admin</p>
+                    <p class="font-display text-lg font-bold lg:hidden">{{ $brandAdminLabel }}</p>
                     <p class="hidden text-sm text-muted-foreground lg:block">{{ auth()->user()->name }} · {{ auth()->user()->role->label() }}</p>
                     <a href="{{ route('home') }}" class="rounded-md bg-secondary px-4 py-2 text-xs font-bold uppercase tracking-wider text-secondary-foreground">Storefront</a>
                 </header>

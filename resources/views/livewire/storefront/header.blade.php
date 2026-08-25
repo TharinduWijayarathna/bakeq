@@ -7,7 +7,7 @@
     <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <a href="{{ route('home') }}" class="flex items-center gap-2.5" wire:navigate>
             <img src="{{ asset('images/logo-mark.png') }}" alt="" class="h-10 w-auto sm:h-11" width="44" height="44" decoding="async">
-            <span class="font-script text-2xl leading-none text-primary sm:text-3xl">Rushq cakes</span>
+            <span class="font-script text-2xl leading-none text-primary sm:text-3xl">{{ $brandShortName }}</span>
         </a>
 
         <nav class="hidden items-center gap-6 lg:flex">

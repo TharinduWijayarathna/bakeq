@@ -148,31 +148,32 @@
 }
 
 :root {
+    /* Rushq cakes logo: bubblegum pink + teal icing + cherry deep */
     --radius: 1.75rem;
-    --background: oklch(0.985 0.012 340);
-    --foreground: oklch(0.28 0.13 340);
+    --background: oklch(0.99 0.008 350);
+    --foreground: oklch(0.32 0.08 350);
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.28 0.13 340);
+    --card-foreground: oklch(0.32 0.08 350);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.28 0.13 340);
-    --primary: oklch(0.62 0.24 348);
-    --primary-foreground: oklch(0.99 0.01 340);
-    --secondary: oklch(0.94 0.045 340);
-    --secondary-foreground: oklch(0.35 0.15 345);
-    --muted: oklch(0.96 0.025 340);
-    --muted-foreground: oklch(0.52 0.07 340);
-    --accent: oklch(0.68 0.13 200);
-    --accent-foreground: oklch(0.99 0.01 200);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.984 0.003 247.858);
-    --border: oklch(0.9 0.04 340);
-    --input: oklch(0.9 0.04 340);
-    --ring: oklch(0.62 0.24 348);
-    --hero-deep: oklch(0.32 0.16 340);
-    --gradient-hero: linear-gradient(135deg, oklch(0.72 0.21 350), oklch(0.85 0.12 340));
-    --gradient-sweet: linear-gradient(100deg, oklch(0.62 0.24 348), oklch(0.68 0.13 200));
-    --shadow-sweet: 0 24px 60px -24px oklch(0.62 0.24 348 / 0.45);
-    --shadow-soft: 0 12px 32px -18px oklch(0.4 0.12 340 / 0.35);
+    --popover-foreground: oklch(0.32 0.08 350);
+    --primary: oklch(0.64 0.22 3);
+    --primary-foreground: oklch(0.995 0.005 350);
+    --secondary: oklch(0.95 0.035 350);
+    --secondary-foreground: oklch(0.38 0.12 350);
+    --muted: oklch(0.965 0.018 350);
+    --muted-foreground: oklch(0.5 0.05 350);
+    --accent: oklch(0.74 0.11 210);
+    --accent-foreground: oklch(0.22 0.04 210);
+    --destructive: oklch(0.55 0.2 25);
+    --destructive-foreground: oklch(0.99 0.01 25);
+    --border: oklch(0.91 0.03 350);
+    --input: oklch(0.91 0.03 350);
+    --ring: oklch(0.64 0.22 3);
+    --hero-deep: oklch(0.36 0.14 350);
+    --gradient-hero: linear-gradient(135deg, oklch(0.78 0.14 350), oklch(0.88 0.07 200));
+    --gradient-sweet: linear-gradient(105deg, oklch(0.64 0.22 3), oklch(0.74 0.11 210));
+    --shadow-sweet: 0 24px 60px -24px oklch(0.64 0.22 3 / 0.42);
+    --shadow-soft: 0 12px 32px -18px oklch(0.36 0.1 350 / 0.28);
     --livewire-progress-bar-color: var(--primary);
 }
 
@@ -417,8 +418,8 @@
     --radius-2xl: 0.25rem;
     --radius-3xl: 0.25rem;
     --radius-4xl: 0.25rem;
-    --background: oklch(0.975 0.006 340);
-    --shadow-soft: 0 1px 2px oklch(0.4 0.08 340 / 0.06), 0 10px 24px -18px oklch(0.4 0.1 340 / 0.16);
+    --background: oklch(0.98 0.006 350);
+    --shadow-soft: 0 1px 2px oklch(0.36 0.06 350 / 0.06), 0 10px 24px -18px oklch(0.36 0.08 350 / 0.14);
 }
 
 .admin-app .rounded-full {

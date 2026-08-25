@@ -197,7 +197,7 @@ test('the assistant answers with gemini flash', function () {
                 [
                     'content' => [
                         'parts' => [
-                            ['text' => "**Vanilla sponge** is the most loved Bakeq flavour.\n\n- Soft and simple\n- A favourite for birthdays"],
+                            ['text' => "**Vanilla sponge** is the most loved Rushq cakes flavour.\n\n- Soft and simple\n- A favourite for birthdays"],
                         ],
                     ],
                 ],

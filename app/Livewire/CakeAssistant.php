@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Contracts\CakeKnowledgeAssistant;
 use App\Models\AssistantMessage;
 use App\Support\AssistantTools;
+use App\Support\Brand;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -89,7 +90,7 @@ class CakeAssistant extends Component
                 'How does the designer work?',
             ],
             'whatsappUrl' => AssistantTools::whatsappHandoffUrl(
-                'Hi Bakeq, I need help with a cake order.'
+                'Hi '.Brand::shortName().', I need help with a cake order.'
             ),
         ]);
     }

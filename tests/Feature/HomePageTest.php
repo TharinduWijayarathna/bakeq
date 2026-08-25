@@ -11,7 +11,7 @@ test('the home page loads featured cakes', function () {
     $this->get(route('home'))
         ->assertOk()
         ->assertSee('Classic Birthday Cake')
-        ->assertSee('Bakeq Cakes by Shashi')
+        ->assertSee('Rushq cakes by Shashi')
         ->assertSee('sweet cakes')
         ->assertSee('images/brand-banner.jpg', false);
 });

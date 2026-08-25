@@ -3,6 +3,7 @@
 namespace App\Ai;
 
 use App\Models\DesignerOption;
+use App\Support\Brand;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -62,7 +63,7 @@ class CakePreviewPrompt
     public function systemInstruction(): string
     {
         return implode(' ', [
-            'You generate one photorealistic bakery product photograph for Bakeq, a Sri Lankan home bakery.',
+            'You generate one photorealistic bakery product photograph for '.Brand::name().', a Sri Lankan home bakery.',
             'Match the customer specifications exactly.',
             'Do not invent decorations, colours, cake types, or toppings that were not specified.',
             'No text, letters, logos, watermarks, people, or hands.',

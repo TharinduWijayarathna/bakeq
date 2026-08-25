@@ -6,17 +6,23 @@
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
-            color: #1f1a1c;
+            color: #3d2433;
             font-size: 12px;
             margin: 0;
-            padding: 24px;
+            padding: 28px;
+        }
+        .brand-bar {
+            height: 6px;
+            background: linear-gradient(90deg, #ec407a 0%, #26c6da 100%);
+            margin: -28px -28px 22px -28px;
         }
         h1 {
             font-size: 22px;
             margin: 0 0 4px 0;
+            color: #c2185b;
         }
         .muted {
-            color: #6b5f63;
+            color: #7a5a66;
             font-size: 11px;
             margin: 0;
         }
@@ -42,13 +48,13 @@
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            color: #6b5f63;
-            border-bottom: 1px solid #ddd;
+            color: #00838f;
+            border-bottom: 2px solid #ec407a;
             padding: 8px 4px;
         }
         .items td {
             padding: 10px 4px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f3d6e0;
             vertical-align: top;
         }
         .items .num,
@@ -67,12 +73,21 @@
         .totals .due td {
             font-weight: bold;
             font-size: 14px;
-            border-top: 2px solid #1f1a1c;
+            color: #c2185b;
+            border-top: 2px solid #c2185b;
             padding-top: 10px;
         }
         .label {
             font-weight: bold;
             margin: 0 0 4px 0;
+            color: #3d2433;
+        }
+        .footer {
+            margin-top: 36px;
+            padding-top: 12px;
+            border-top: 1px solid #f3d6e0;
+            color: #7a5a66;
+            font-size: 10px;
         }
     </style>
 </head>
@@ -80,9 +95,12 @@
     @php
         $business = $invoice->business_snapshot ?? [];
         $customer = $invoice->customer_snapshot ?? [];
+        $brandName = $business['name'] ?? \App\Support\Brand::name();
     @endphp
 
-    <h1>{{ $business['name'] ?? 'Bakeq Cakes' }}</h1>
+    <div class="brand-bar"></div>
+
+    <h1>{{ $brandName }}</h1>
     <p class="muted">
         {{ $business['address'] ?? '' }}
         @if (! empty($business['phone'])) · {{ $business['phone'] }} @endif
@@ -154,5 +172,7 @@
             <td class="num">{{ $invoice->formattedTotalDue() }}</td>
         </tr>
     </table>
+
+    <p class="footer">{{ \App\Support\Brand::tagline() }} · {{ $brandName }}</p>
 </body>
 </html>
