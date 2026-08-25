@@ -67,6 +67,20 @@ class CartItem extends Model
 
     public function displayName(): string
     {
-        return $this->cake?->name ?? 'Custom cake design';
+        if ($this->cake !== null) {
+            return $this->cake->name;
+        }
+
+        $selections = $this->cakeDesign?->selections ?? [];
+
+        if (($selections['mode'] ?? null) === 'redesign' && filled($selections['cake_name'] ?? null)) {
+            return 'Redesign: '.$selections['cake_name'];
+        }
+
+        if (($selections['mode'] ?? null) === 'prompt') {
+            return 'AI described cake';
+        }
+
+        return 'Custom cake design';
     }
 }

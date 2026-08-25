@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Ai\GeminiCakeKnowledgeAssistant;
 use App\Ai\GeminiCakePreviewGenerator;
+use App\Ai\GeminiPromptCakeImageGenerator;
 use App\Contracts\CakeKnowledgeAssistant;
 use App\Contracts\CakePreviewGenerator;
+use App\Contracts\PromptCakeImageGenerator;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(CakePreviewGenerator::class, GeminiCakePreviewGenerator::class);
+        $this->app->bind(PromptCakeImageGenerator::class, GeminiPromptCakeImageGenerator::class);
         $this->app->bind(CakeKnowledgeAssistant::class, GeminiCakeKnowledgeAssistant::class);
     }
 
@@ -47,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
 
         Model::preventLazyLoading(! app()->isProduction());
 
-        Gate::define('access-admin', fn (User $user): bool => $user->isAdmin());
+        Gate::define('access-admin', fn (User $user): bool => $user->isStaff());
 
         Password::defaults(fn (): ?Password => app()->isProduction()
             ? Password::min(12)

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureStaffCan;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Application;
@@ -22,12 +23,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
+            'staff.can' => EnsureStaffCan::class,
         ]);
 
         $middleware->redirectGuestsTo(fn (): string => route('login'));
 
         $middleware->redirectUsersTo(function (): string {
-            return auth()->user()?->isAdmin()
+            return auth()->user()?->isStaff()
                 ? route('admin.dashboard')
                 : route('home');
         });

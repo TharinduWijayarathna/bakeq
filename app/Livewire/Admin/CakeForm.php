@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Cake;
 use App\Models\Category;
+use App\Support\AuditLogger;
 use App\Support\Money;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
@@ -131,9 +132,22 @@ class CakeForm extends Component
 
         if ($this->cake?->exists) {
             unset($payload['slug']);
+            $oldPrice = $this->cake->price;
             $this->cake->update($payload);
+
+            if ($oldPrice !== $payload['price']) {
+                AuditLogger::record('cake.price_changed', $this->cake, [
+                    'price' => $oldPrice,
+                ], [
+                    'price' => $payload['price'],
+                ]);
+            }
         } else {
             $this->cake = Cake::query()->create($payload);
+            AuditLogger::record('cake.created', $this->cake, null, [
+                'name' => $this->cake->name,
+                'price' => $this->cake->price,
+            ]);
         }
 
         session()->flash('status', 'Cake saved.');

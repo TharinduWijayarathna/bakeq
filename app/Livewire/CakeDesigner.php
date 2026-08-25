@@ -3,8 +3,10 @@
 namespace App\Livewire;
 
 use App\Actions\AddToCart;
+use App\Enums\OrderOrigin;
 use App\Enums\SelectionType;
 use App\Jobs\GenerateCakePreview;
+use App\Jobs\GeneratePromptCakePreview;
 use App\Models\CakeDesign;
 use App\Models\DesignerOption;
 use App\Models\DesignerOptionGroup;
@@ -20,12 +22,18 @@ use Livewire\Component;
 #[Title('Designer')]
 class CakeDesigner extends Component
 {
+    public string $mode = 'studio';
+
     public int $tiers = 1;
 
     /**
      * @var array<int|string, int|list<int>>
      */
     public array $selections = [];
+
+    public string $prompt = '';
+
+    public string $cartNotes = '';
 
     public ?int $designId = null;
 
@@ -35,6 +43,16 @@ class CakeDesigner extends Component
     {
         $this->tiers = DesignerSetting::current()->min_tiers;
         $this->restoreLatestDesign();
+    }
+
+    public function setMode(string $mode): void
+    {
+        if (! in_array($mode, ['studio', 'describe'], true)) {
+            return;
+        }
+
+        $this->mode = $mode;
+        $this->resetErrorBag();
     }
 
     public function isSelected(int $groupId, int $optionId): bool
@@ -97,9 +115,12 @@ class CakeDesigner extends Component
         $design = CakeDesign::query()->create([
             'user_id' => auth()->id(),
             'selections' => [
+                'mode' => 'studio',
+                'origin' => OrderOrigin::AiDesigner->value,
                 'tiers' => $this->tiers,
                 'option_ids' => $optionIds,
                 'labels' => DesignerOption::query()->whereIn('id', $optionIds)->orderBy('name')->pluck('name')->all(),
+                'customer_notes' => filled($this->cartNotes) ? trim($this->cartNotes) : null,
             ],
             'tiers' => $this->tiers,
             'preview_path' => null,
@@ -111,6 +132,37 @@ class CakeDesigner extends Component
         $this->resetErrorBag('generate');
 
         GenerateCakePreview::dispatch($design->id);
+
+        $this->refreshPreview();
+    }
+
+    public function generateFromPrompt(): void
+    {
+        $this->validate([
+            'prompt' => ['required', 'string', 'min:10', 'max:1000'],
+            'cartNotes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $settings = DesignerSetting::current();
+
+        $design = CakeDesign::query()->create([
+            'user_id' => auth()->id(),
+            'selections' => [
+                'mode' => 'prompt',
+                'origin' => OrderOrigin::AiDesigner->value,
+                'prompt' => trim($this->prompt),
+                'customer_notes' => filled($this->cartNotes) ? trim($this->cartNotes) : null,
+            ],
+            'tiers' => $settings->min_tiers,
+            'preview_path' => null,
+            'estimated_price' => $settings->base_price,
+        ]);
+
+        $this->designId = $design->id;
+        $this->generating = true;
+        $this->resetErrorBag('generate');
+
+        GeneratePromptCakePreview::dispatch($design->id);
 
         $this->refreshPreview();
     }
@@ -130,7 +182,7 @@ class CakeDesigner extends Component
         $this->generating = false;
 
         if (filled(config('services.gemini.key')) && str_starts_with($design->preview_path, 'images/previews/')) {
-            $this->addError('generate', 'The AI preview took too long, so this is a stand-in. Tap Generate cake to try again.');
+            $this->addError('generate', 'The AI preview took too long, so this is a stand-in. Tap Generate to try again.');
         }
     }
 
@@ -148,6 +200,12 @@ class CakeDesigner extends Component
             $this->addError('generate', 'Wait for the preview to finish baking first.');
 
             return;
+        }
+
+        if (filled($this->cartNotes)) {
+            $selections = $design->selections ?? [];
+            $selections['customer_notes'] = trim($this->cartNotes);
+            $design->update(['selections' => $selections]);
         }
 
         $addToCart->handle(auth()->user(), design: $design);
@@ -231,6 +289,10 @@ class CakeDesigner extends Component
 
     private function estimatedCents(): int
     {
+        if ($this->mode === 'describe') {
+            return DesignerSetting::current()->base_price;
+        }
+
         $extras = DesignerOption::query()
             ->whereIn('id', $this->selectedOptionIds())
             ->sum('extra_price');
@@ -252,5 +314,10 @@ class CakeDesigner extends Component
         $this->designId = $latest->id;
         $this->tiers = $latest->tiers;
         $this->generating = blank($latest->preview_path);
+
+        $mode = $latest->selections['mode'] ?? 'studio';
+        $this->mode = $mode === 'prompt' ? 'describe' : 'studio';
+        $this->prompt = (string) ($latest->selections['prompt'] ?? '');
+        $this->cartNotes = (string) ($latest->selections['customer_notes'] ?? '');
     }
 }

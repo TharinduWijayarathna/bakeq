@@ -1,13 +1,15 @@
 @props([
     'compact' => false,
     'generating' => false,
+    'method' => 'generate',
+    'label' => 'Generate cake',
 ])
 
 <button
     type="button"
-    wire:click="generate"
+    wire:click="{{ $method }}"
     wire:loading.attr="disabled"
-    wire:target="generate"
+    wire:target="{{ $method }}"
     @disabled($generating)
     {{ $attributes->class([
         'inline-flex items-center justify-center gap-2 rounded-full bg-primary font-bold text-primary-foreground disabled:opacity-70',
@@ -21,11 +23,11 @@
             Baking…
         </span>
     @else
-        <span wire:loading.remove wire:target="generate" class="inline-flex items-center gap-2">
+        <span wire:loading.remove wire:target="{{ $method }}" class="inline-flex items-center gap-2">
             <x-icon name="sparkle" class="size-4" />
-            Generate cake
+            {{ $label }}
         </span>
-        <span wire:loading.flex wire:target="generate" class="items-center gap-2">
+        <span wire:loading.flex wire:target="{{ $method }}" class="items-center gap-2">
             <x-spinner />
             Baking…
         </span>

@@ -14,7 +14,7 @@ class OrderPolicy
 
     public function view(User $user, Order $order): bool
     {
-        return $user->isAdmin() || $order->user_id === $user->id;
+        return $user->isStaff() || $order->user_id === $user->id;
     }
 
     public function create(User $user): bool
@@ -24,6 +24,6 @@ class OrderPolicy
 
     public function update(User $user, Order $order): bool
     {
-        return $user->isAdmin();
+        return $user->canAccess('orders');
     }
 }

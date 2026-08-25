@@ -6,6 +6,7 @@ use App\Enums\FulfillmentMethod;
 use App\Enums\OrderOrigin;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
+use App\Enums\ProductionStatus;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -26,6 +27,7 @@ class OrderFactory extends Factory
             'origin' => OrderOrigin::Catalog,
             'fulfillment_method' => FulfillmentMethod::Delivery,
             'status' => OrderStatus::Pending,
+            'production_status' => ProductionStatus::Planning,
             'subtotal' => 450000,
             'addons_total' => 0,
             'delivery_fee' => 50000,

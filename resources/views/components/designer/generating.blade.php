@@ -1,13 +1,15 @@
 @props([
     'active' => false,
+    'pollMethod' => 'refreshPreview',
+    'target' => 'generate',
 ])
 
 <div
     @if ($active)
-        wire:poll.2s="refreshPreview"
+        wire:poll.2s="{{ $pollMethod }}"
     @else
         wire:loading.flex
-        wire:target="generate"
+        wire:target="{{ $target }}"
     @endif
     {{ $attributes->class([
         'absolute inset-0 z-10 items-center justify-center overflow-hidden bg-card/92 px-6 text-center backdrop-blur-md',

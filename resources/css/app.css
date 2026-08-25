@@ -408,7 +408,24 @@
 }
 
 .admin-app {
-    --radius: 0.5rem;
+    --radius: 0.25rem;
+    --radius-xs: 0.125rem;
+    --radius-sm: 0.125rem;
+    --radius-md: 0.25rem;
+    --radius-lg: 0.25rem;
+    --radius-xl: 0.25rem;
+    --radius-2xl: 0.25rem;
+    --radius-3xl: 0.25rem;
+    --radius-4xl: 0.25rem;
     --background: oklch(0.975 0.006 340);
     --shadow-soft: 0 1px 2px oklch(0.4 0.08 340 / 0.06), 0 10px 24px -18px oklch(0.4 0.1 340 / 0.16);
+}
+
+.admin-app .rounded-full {
+    border-radius: var(--radius);
+}
+
+.admin-app .animate-spin.rounded-full,
+.admin-app [class*='size-'].rounded-full {
+    border-radius: 9999px;
 }

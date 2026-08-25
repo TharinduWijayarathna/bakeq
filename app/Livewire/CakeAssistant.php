@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Contracts\CakeKnowledgeAssistant;
 use App\Models\AssistantMessage;
+use App\Support\AssistantTools;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -61,7 +62,12 @@ class CakeAssistant extends Component
         ]);
 
         $this->question = $validated['message'];
-        $this->answer = $assistant->reply($validated['message'], $history);
+
+        $toolResult = AssistantTools::tryHandle($validated['message'], auth()->user());
+
+        $this->answer = $toolResult['handled']
+            ? (string) $toolResult['answer']
+            : $assistant->reply($validated['message'], $history);
 
         AssistantMessage::query()->create([
             'user_id' => auth()->id(),
@@ -77,11 +83,14 @@ class CakeAssistant extends Component
     {
         return view('livewire.cake-assistant', [
             'suggestions' => [
-                'How many people does a 1kg cake serve?',
-                'What flavours can I order?',
-                'How does the designer work?',
+                'Status of order #1',
+                'Recommend a birthday cake under 8000',
                 'How should I store a cream cake?',
+                'How does the designer work?',
             ],
+            'whatsappUrl' => AssistantTools::whatsappHandoffUrl(
+                'Hi Bakeq, I need help with a cake order.'
+            ),
         ]);
     }
 

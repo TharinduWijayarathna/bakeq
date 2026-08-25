@@ -53,7 +53,9 @@
             <tbody>
                 @forelse ($customers as $customer)
                     <tr wire:key="cu-{{ $customer->id }}" class="border-t border-border">
-                        <td class="px-4 py-3 font-semibold">{{ $customer->name }}</td>
+                        <td class="px-4 py-3 font-semibold">
+                            <a href="{{ route('admin.customers.show', $customer) }}" class="text-primary" wire:navigate>{{ $customer->name }}</a>
+                        </td>
                         <td class="px-4 py-3">{{ $customer->email }}</td>
                         <td class="px-4 py-3">{{ $customer->city ?? '—' }}</td>
                         <td class="px-4 py-3">{{ $customer->customer_source->label() }}</td>

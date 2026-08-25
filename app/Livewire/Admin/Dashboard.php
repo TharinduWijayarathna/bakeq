@@ -7,8 +7,12 @@ use App\Enums\UserRole;
 use App\Models\Cake;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ShopSetting;
 use App\Models\User;
+use App\Support\BakeryAnalytics;
+use App\Support\DemandForecast;
 use App\Support\Money;
+use App\Support\ProcurementSuggestions;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -21,6 +25,27 @@ use stdClass;
 #[Title('Dashboard')]
 class Dashboard extends Component
 {
+    public string $monthly_budget_rupees = '0';
+
+    public function mount(): void
+    {
+        $this->monthly_budget_rupees = (string) Money::centsToRupees(ShopSetting::current()->monthly_revenue_budget);
+    }
+
+    public function saveBudget(): void
+    {
+        $validated = $this->validate([
+            'monthly_budget_rupees' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        $settings = ShopSetting::current();
+        $settings->update([
+            'monthly_revenue_budget' => Money::rupeesToCents((float) $validated['monthly_budget_rupees']),
+        ]);
+
+        session()->flash('status', 'Monthly revenue budget updated.');
+    }
+
     public function render(): View
     {
         $from = now()->subDays(13)->startOfDay();
@@ -28,6 +53,12 @@ class Dashboard extends Component
         $dailySeries = $this->dailySeries($from);
         $statusCounts = $this->statusCounts();
         $totalOrders = (int) $statusCounts->sum();
+        $month = BakeryAnalytics::monthSummary();
+        $marginTrend = BakeryAnalytics::marginTrend(8);
+        $sellers = BakeryAnalytics::sellers();
+        $categories = BakeryAnalytics::revenueByCategory();
+        $forecast = DemandForecast::weekly(4, 4);
+        $procurement = ProcurementSuggestions::untilSaturday();
 
         return view('livewire.admin.dashboard', [
             'cakeCount' => Cake::query()->count(),
@@ -41,6 +72,21 @@ class Dashboard extends Component
             'revenueChart' => $this->revenueChart($dailySeries),
             'statusBreakdown' => $this->statusBreakdown($statusCounts, max($totalOrders, 1)),
             'topCakes' => $this->topCakes(),
+            'monthSummary' => [
+                ...$month,
+                'revenue_formatted' => Money::format($month['revenue']),
+                'previous_revenue_formatted' => Money::format($month['previous_revenue']),
+                'budget_formatted' => Money::format($month['budget']),
+                'cogs_formatted' => Money::format($month['cogs']),
+                'gross_profit_formatted' => Money::format($month['gross_profit']),
+                'waste_cost_formatted' => Money::format($month['waste_cost']),
+                'net_profit_formatted' => Money::format($month['net_profit']),
+            ],
+            'marginTrendChart' => $this->marginTrendChart($marginTrend),
+            'sellers' => $sellers,
+            'categories' => $categories,
+            'forecast' => $forecast,
+            'procurement' => $procurement,
         ]);
     }
 
@@ -198,6 +244,71 @@ class Dashboard extends Component
                 ->values()
                 ->all()),
             'hasData' => collect($series)->contains(fn (array $day): bool => $day['revenue'] > 0 || $day['orders'] > 0),
+        ];
+    }
+
+    /**
+     * @param  list<array{label: string, revenue: int, margin_percent: float}>  $trend
+     * @return array{
+     *     width: int,
+     *     height: int,
+     *     plotLeft: int,
+     *     polyline: string,
+     *     points: list<array{x: float, y: float, label: string, margin: string}>,
+     *     yLabels: list<array{y: float, text: string}>,
+     *     xLabels: list<array{x: float, text: string}>,
+     *     hasData: bool
+     * }
+     */
+    private function marginTrendChart(array $trend): array
+    {
+        $width = 640;
+        $height = 180;
+        $padLeft = 40;
+        $padRight = 16;
+        $padTop = 14;
+        $padBottom = 28;
+        $plotWidth = $width - $padLeft - $padRight;
+        $plotHeight = $height - $padTop - $padBottom;
+        $count = count($trend);
+        $margins = array_column($trend, 'margin_percent');
+        $max = max(1.0, ...($margins === [] ? [1.0] : $margins));
+        $stepX = $count > 1 ? $plotWidth / ($count - 1) : 0;
+
+        $points = collect($trend)->values()->map(function (array $week, int $index) use ($padLeft, $padTop, $plotHeight, $stepX, $max): array {
+            $x = $padLeft + ($index * $stepX);
+            $y = $padTop + $plotHeight - ((max(0, $week['margin_percent']) / $max) * $plotHeight);
+
+            return [
+                'x' => round($x, 2),
+                'y' => round($y, 2),
+                'label' => $week['label'],
+                'margin' => $week['margin_percent'].'%',
+            ];
+        });
+
+        $polyline = $points->map(fn (array $point): string => $point['x'].','.$point['y'])->implode(' ');
+        $baseline = $padTop + $plotHeight;
+
+        return [
+            'width' => $width,
+            'height' => $height,
+            'plotLeft' => $padLeft,
+            'polyline' => $polyline,
+            'points' => array_values($points->all()),
+            'yLabels' => [
+                ['y' => $padTop, 'text' => round($max, 0).'%'],
+                ['y' => $baseline, 'text' => '0%'],
+            ],
+            'xLabels' => array_values($points
+                ->filter(fn (array $point, int $index): bool => $index % 2 === 0 || $index === $count - 1)
+                ->map(fn (array $point): array => [
+                    'x' => $point['x'],
+                    'text' => $point['label'],
+                ])
+                ->values()
+                ->all()),
+            'hasData' => collect($trend)->contains(fn (array $week): bool => $week['margin_percent'] != 0.0 || $week['revenue'] > 0),
         ];
     }
 

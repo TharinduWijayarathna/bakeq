@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CustomerSource;
 use App\Enums\UserRole;
+use App\Support\StaffPermissions;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -23,13 +24,14 @@ use Illuminate\Support\Str;
  * @property string|null $city
  * @property UserRole $role
  * @property CustomerSource $customer_source
+ * @property string|null $loyalty_notes
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'phone', 'address_line', 'city', 'role', 'customer_source'])]
+#[Fillable(['name', 'email', 'password', 'phone', 'address_line', 'city', 'role', 'customer_source', 'loyalty_notes'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -45,8 +47,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
@@ -59,14 +59,24 @@ class User extends Authenticatable
         ];
     }
 
+    public function isStaff(): bool
+    {
+        return $this->role->isStaff();
+    }
+
     public function isAdmin(): bool
     {
-        return $this->role === UserRole::Admin;
+        return in_array($this->role, [UserRole::Admin, UserRole::Manager], true);
     }
 
     public function isCustomer(): bool
     {
         return $this->role === UserRole::Customer;
+    }
+
+    public function canAccess(string $ability): bool
+    {
+        return StaffPermissions::allows($this, $ability);
     }
 
     public function cartItems(): HasMany
@@ -89,9 +99,16 @@ class User extends Authenticatable
         return $this->hasMany(CakeDesign::class);
     }
 
-    /**
-     * Get the user's initials
-     */
+    public function shiftEntries(): HasMany
+    {
+        return $this->hasMany(ShiftEntry::class);
+    }
+
+    public function openShift(): ?ShiftEntry
+    {
+        return $this->shiftEntries()->whereNull('clocked_out_at')->latest('clocked_in_at')->first();
+    }
+
     public function initials(): string
     {
         $initials = Str::initials($this->name, true);

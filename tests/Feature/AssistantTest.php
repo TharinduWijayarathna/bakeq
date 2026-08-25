@@ -13,9 +13,9 @@ test('customers can open the assistant', function () {
     $this->actingAs(customer())
         ->get(route('assistant'))
         ->assertOk()
-        ->assertSee('Ask anything about cakes')
+        ->assertSee('Cake help, fast')
         ->assertSee('Your question')
-        ->assertDontSee('Cake help');
+        ->assertSee('WhatsApp handoff');
 });
 
 test('the assistant answers cake knowledge questions', function () {

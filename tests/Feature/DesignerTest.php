@@ -8,7 +8,7 @@ use App\Models\DesignerOptionGroup;
 use App\Models\DesignerSetting;
 use Livewire\Livewire;
 
-test('the designer has selectable cards and no prompt textarea', function () {
+test('the designer studio tab has cards and a describe tab', function () {
     DesignerSetting::factory()->create();
     $group = DesignerOptionGroup::factory()->create(['name' => 'Flavour', 'is_required' => true]);
     DesignerOption::factory()->create(['designer_option_group_id' => $group->id, 'name' => 'Vanilla']);
@@ -19,7 +19,8 @@ test('the designer has selectable cards and no prompt textarea', function () {
         ->assertSee('Designer')
         ->assertSee('Tap the look you want')
         ->assertSee('Vanilla')
-        ->assertDontSee('<textarea', false)
+        ->assertSee('Describe it')
+        ->assertDontSee('wire:model="prompt"', false)
         ->assertSee('Generate cake');
 });
 

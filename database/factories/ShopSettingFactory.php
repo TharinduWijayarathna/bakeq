@@ -20,6 +20,12 @@ class ShopSettingFactory extends Factory
             'pickup_fee' => 0,
             'tax_percent' => 0,
             'deposit_percent' => 0,
+            'labor_overhead_percent' => 15,
+            'monthly_revenue_budget' => 50000000,
+            'business_name' => 'Bakeq Cakes',
+            'business_address' => 'Colombo, Sri Lanka',
+            'business_phone' => '0767681678',
+            'business_email' => 'hello@bakeq.test',
         ];
     }
 }

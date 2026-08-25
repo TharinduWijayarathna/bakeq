@@ -137,6 +137,11 @@ class Cake extends Model
         return $this->hasMany(WishlistItem::class);
     }
 
+    public function recipes(): HasMany
+    {
+        return $this->hasMany(Recipe::class);
+    }
+
     public function catalogBasePrice(): int
     {
         return $this->base_price ?? $this->price;

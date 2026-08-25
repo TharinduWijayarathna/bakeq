@@ -13,6 +13,7 @@
         <nav class="hidden items-center gap-6 lg:flex">
             <a href="{{ route('home') }}" class="text-sm font-semibold {{ request()->routeIs('home') ? 'text-primary' : 'text-muted-foreground hover:text-foreground' }}" wire:navigate>Home</a>
             <a href="{{ route('cakes.index') }}" class="text-sm font-semibold {{ request()->routeIs('cakes.*') ? 'text-primary' : 'text-muted-foreground hover:text-foreground' }}" wire:navigate>Cakes</a>
+            <a href="{{ route('gallery') }}" class="text-sm font-semibold {{ request()->routeIs('gallery') ? 'text-primary' : 'text-muted-foreground hover:text-foreground' }}" wire:navigate>Previous cakes</a>
             <a href="{{ route('designer') }}" class="text-sm font-semibold {{ request()->routeIs('designer') ? 'text-primary' : 'text-muted-foreground hover:text-foreground' }}" wire:navigate>Designer</a>
             <a href="{{ route('assistant') }}" class="text-sm font-semibold {{ request()->routeIs('assistant') ? 'text-primary' : 'text-muted-foreground hover:text-foreground' }}" wire:navigate>Assistant</a>
         </nav>
@@ -34,7 +35,7 @@
                 <a href="{{ route('profile') }}" class="hidden rounded-full bg-secondary px-4 py-2 text-xs font-bold uppercase tracking-wider text-secondary-foreground sm:inline-flex" wire:navigate>
                     {{ auth()->user()->name }}
                 </a>
-                @if (auth()->user()->isAdmin())
+                @if (auth()->user()->isStaff())
                     <a href="{{ route('admin.dashboard') }}" class="hidden rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-wider text-primary-foreground sm:inline-flex" wire:navigate>
                         Admin
                     </a>
@@ -54,6 +55,7 @@
         <div class="space-y-1 border-t border-border px-4 py-3 lg:hidden">
             <a href="{{ route('home') }}" class="block rounded-2xl px-3 py-2 text-sm font-semibold" wire:navigate>Home</a>
             <a href="{{ route('cakes.index') }}" class="block rounded-2xl px-3 py-2 text-sm font-semibold" wire:navigate>Cakes</a>
+            <a href="{{ route('gallery') }}" class="block rounded-2xl px-3 py-2 text-sm font-semibold" wire:navigate>Previous cakes</a>
             <a href="{{ route('designer') }}" class="block rounded-2xl px-3 py-2 text-sm font-semibold" wire:navigate>Designer</a>
             <a href="{{ route('assistant') }}" class="block rounded-2xl px-3 py-2 text-sm font-semibold" wire:navigate>Assistant</a>
             @auth

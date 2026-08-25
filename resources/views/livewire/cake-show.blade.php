@@ -33,9 +33,98 @@
                     </span>
                 </button>
                 <a href="{{ route('designer') }}" class="rounded-full bg-secondary px-7 py-3.5 text-sm font-bold text-secondary-foreground" wire:navigate>Customise in designer</a>
+                <button type="button" wire:click="openRedesign" class="rounded-full border border-border px-7 py-3.5 text-sm font-bold">
+                    <span class="inline-flex items-center gap-2"><x-icon name="wand" class="size-4" /> Redesign this</span>
+                </button>
             </div>
         </div>
     </div>
+
+    @if ($redesignOpen)
+        <section class="mt-10 rounded-4xl bg-card p-6 shadow-soft" wire:loading.class="opacity-70" wire:target="generateRedesign">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <p class="font-script text-2xl text-primary">AI redesign</p>
+                    <h2 class="mt-1 text-2xl font-bold">Describe the change</h2>
+                    <p class="mt-1 text-sm text-muted-foreground">We start from this cake and apply your request.</p>
+                </div>
+                <button type="button" wire:click="$set('redesignOpen', false)" class="text-sm font-semibold text-muted-foreground">Close</button>
+            </div>
+
+            <div class="mt-6 grid gap-6 lg:grid-cols-2">
+                <div>
+                    <textarea
+                        wire:model="redesignPrompt"
+                        rows="5"
+                        placeholder="e.g. Same cake but with gold leaf and fresh blueberries instead of strawberries"
+                        class="w-full rounded-3xl border border-input bg-background px-4 py-3 text-sm"
+                    ></textarea>
+                    @error('redesignPrompt') <p class="mt-2 text-sm text-destructive">{{ $message }}</p> @enderror
+
+                    <label class="mt-4 mb-1 block text-sm font-semibold">Notes for the baker (optional)</label>
+                    <textarea
+                        wire:model="redesignNotes"
+                        rows="3"
+                        placeholder="Allergies, writing, pickup time…"
+                        class="w-full rounded-3xl border border-input bg-background px-4 py-3 text-sm"
+                    ></textarea>
+
+                    <button
+                        type="button"
+                        wire:click="generateRedesign"
+                        wire:loading.attr="disabled"
+                        wire:target="generateRedesign"
+                        @disabled($redesignGenerating)
+                        class="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground disabled:opacity-70"
+                    >
+                        <span wire:loading.remove wire:target="generateRedesign" class="inline-flex items-center gap-2">
+                            <x-icon name="sparkle" class="size-4" /> Generate redesign
+                        </span>
+                        <span wire:loading.flex wire:target="generateRedesign" class="items-center gap-2">
+                            <x-spinner /> Baking…
+                        </span>
+                    </button>
+                    @error('redesign') <p class="mt-3 text-sm text-destructive">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="relative overflow-hidden rounded-3xl bg-secondary ring-1 ring-border/70">
+                    @if ($redesignDesign && filled($redesignDesign->preview_path))
+                        <img src="{{ $redesignDesign->previewUrl() }}" alt="Redesigned cake preview" class="h-80 w-full object-cover">
+                    @else
+                        <div class="grid h-80 place-items-center px-6 text-center">
+                            <div>
+                                <x-icon name="wand" class="mx-auto size-8 text-primary" />
+                                <p class="mt-3 text-sm font-semibold">Redesign preview</p>
+                                <p class="mt-1 text-xs text-muted-foreground">Describe a change, then generate.</p>
+                            </div>
+                        </div>
+                    @endif
+                    <x-designer.generating
+                        :active="$redesignGenerating"
+                        poll-method="refreshRedesignPreview"
+                        target="generateRedesign"
+                    />
+                </div>
+            </div>
+
+            @if ($redesignDesign && filled($redesignDesign->preview_path))
+                <button
+                    type="button"
+                    wire:click="addRedesignToCart"
+                    wire:loading.attr="disabled"
+                    wire:target="addRedesignToCart"
+                    class="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-secondary px-7 py-3.5 text-sm font-bold text-secondary-foreground disabled:opacity-70"
+                >
+                    <span wire:loading.remove wire:target="addRedesignToCart" class="inline-flex items-center gap-2">
+                        <x-icon name="shopping-bag" class="size-4" /> Add redesign to cart
+                    </span>
+                    <span wire:loading.flex wire:target="addRedesignToCart" class="items-center gap-2">
+                        <x-spinner /> Adding…
+                    </span>
+                </button>
+            @endif
+        </section>
+    @endif
 
     <div class="mt-12 grid gap-6 lg:grid-cols-2">
         <section class="rounded-4xl bg-card p-6 shadow-soft">

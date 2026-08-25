@@ -6,6 +6,8 @@ use App\Enums\FulfillmentMethod;
 use App\Enums\OrderOrigin;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
+use App\Enums\ProductionStatus;
+use App\Exceptions\InsufficientStockException;
 use App\Models\Cake;
 use App\Models\Order;
 use App\Models\User;
@@ -15,6 +17,11 @@ use Illuminate\Validation\ValidationException;
 
 class CreateManualOrder
 {
+    public function __construct(
+        private AdjustInventoryForOrder $inventory,
+        private GenerateInvoice $generateInvoice,
+    ) {}
+
     /**
      * @param  array{
      *     user_id: int,
@@ -48,36 +55,46 @@ class CreateManualOrder
         $itemsSubtotal = $cake->price * $quantity;
         $totals = OrderTotals::calculate($itemsSubtotal, fulfillment: $fulfillment);
 
-        return DB::transaction(function () use ($user, $cake, $quantity, $details, $totals, $fulfillment, $origin): Order {
-            $order = Order::query()->create([
-                'user_id' => $user->id,
-                'order_source' => OrderSource::Manual,
-                'origin' => $origin,
-                'fulfillment_method' => $fulfillment,
-                'status' => OrderStatus::Confirmed,
-                'subtotal' => $totals['subtotal'],
-                'addons_total' => $totals['addons_total'],
-                'delivery_fee' => $totals['delivery_fee'],
-                'tax_amount' => $totals['tax_amount'],
-                'deposit_paid' => $totals['deposit_paid'],
-                'total_due' => $totals['total_due'],
-                'delivery_date' => $details['delivery_date'],
-                'delivery_address' => $details['delivery_address'],
-                'notes' => $details['notes'] ?? null,
-            ]);
+        try {
+            return DB::transaction(function () use ($user, $cake, $quantity, $details, $totals, $fulfillment, $origin): Order {
+                $order = Order::query()->create([
+                    'user_id' => $user->id,
+                    'order_source' => OrderSource::Manual,
+                    'origin' => $origin,
+                    'fulfillment_method' => $fulfillment,
+                    'status' => OrderStatus::Confirmed,
+                    'production_status' => ProductionStatus::Planning,
+                    'subtotal' => $totals['subtotal'],
+                    'addons_total' => $totals['addons_total'],
+                    'delivery_fee' => $totals['delivery_fee'],
+                    'tax_amount' => $totals['tax_amount'],
+                    'deposit_paid' => $totals['deposit_paid'],
+                    'total_due' => $totals['total_due'],
+                    'delivery_date' => $details['delivery_date'],
+                    'delivery_address' => $details['delivery_address'],
+                    'notes' => $details['notes'] ?? null,
+                ]);
 
-            $order->items()->create([
-                'cake_id' => $cake->id,
-                'name' => $cake->name,
-                'quantity' => $quantity,
-                'unit_price' => $cake->price,
-                'selections' => [
-                    'origin' => $origin->value,
-                    'order_source' => OrderSource::Manual->value,
-                ],
-            ]);
+                $order->items()->create([
+                    'cake_id' => $cake->id,
+                    'name' => $cake->name,
+                    'quantity' => $quantity,
+                    'unit_price' => $cake->price,
+                    'selections' => [
+                        'origin' => $origin->value,
+                        'order_source' => OrderSource::Manual->value,
+                    ],
+                ]);
 
-            return $order;
-        });
+                $this->inventory->applyConfirmation($order->fresh(['items.cake.recipes.items']));
+                $this->generateInvoice->handle($order->fresh(['user', 'items']));
+
+                return $order->fresh(['items', 'invoice']);
+            });
+        } catch (InsufficientStockException $exception) {
+            throw ValidationException::withMessages([
+                'cake_id' => $exception->getMessage(),
+            ]);
+        }
     }
 }

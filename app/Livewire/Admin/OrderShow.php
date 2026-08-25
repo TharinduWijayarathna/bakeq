@@ -2,8 +2,13 @@
 
 namespace App\Livewire\Admin;
 
+use App\Actions\AdjustInventoryForOrder;
+use App\Actions\GenerateInvoice;
 use App\Enums\OrderStatus;
+use App\Enums\ProductionStatus;
+use App\Exceptions\InsufficientStockException;
 use App\Models\Order;
+use App\Support\AuditLogger;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -16,18 +21,50 @@ class OrderShow extends Component
     public function mount(Order $order): void
     {
         $this->authorize('view', $order);
-        $this->order = $order->load(['user', 'items']);
+        $this->order = $order->load(['user', 'items', 'invoice']);
     }
 
-    public function updateStatus(string $status): void
+    public function updateStatus(string $status, AdjustInventoryForOrder $inventory, GenerateInvoice $generateInvoice): void
     {
         $this->authorize('update', $this->order);
 
-        $this->order->update([
-            'status' => OrderStatus::from($status),
+        $from = $this->order->status;
+        $to = OrderStatus::from($status);
+
+        if ($from === $to) {
+            return;
+        }
+
+        try {
+            $inventory->syncForStatusChange($this->order, $from, $to);
+        } catch (InsufficientStockException $exception) {
+            $this->addError('status', $exception->getMessage());
+
+            return;
+        }
+
+        $payload = ['status' => $to];
+
+        if ($to === OrderStatus::Delivered) {
+            $payload['production_status'] = ProductionStatus::Delivered;
+        } elseif ($to === OrderStatus::Baking) {
+            $payload['production_status'] = ProductionStatus::Baking;
+        } elseif ($to === OrderStatus::Confirmed && $this->order->production_status === ProductionStatus::Planning) {
+            $payload['production_status'] = ProductionStatus::Planning;
+        }
+
+        $this->order->update($payload);
+        $generateInvoice->handle($this->order->fresh(['user', 'items']));
+
+        AuditLogger::record('order.status_changed', $this->order, [
+            'status' => $from->value,
+        ], [
+            'status' => $to->value,
+            'production_status' => $this->order->fresh()->production_status->value,
         ]);
 
-        $this->order->refresh()->load(['user', 'items']);
+        $this->order->refresh()->load(['user', 'items', 'invoice']);
+        $this->resetErrorBag('status');
         session()->flash('status', 'Order status updated.');
     }
 
