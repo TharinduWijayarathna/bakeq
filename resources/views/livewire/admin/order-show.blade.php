@@ -9,7 +9,11 @@
             <p class="mt-2 text-sm">{{ $order->user->name }}</p>
             <p class="text-sm text-muted-foreground">{{ $order->user->email }}</p>
             <p class="mt-3 text-sm">{{ $order->delivery_address }}</p>
-            <p class="text-sm text-muted-foreground">Delivery {{ $order->delivery_date->toFormattedDateString() }}</p>
+            <p class="text-sm text-muted-foreground">{{ $order->fulfillment_method->label() }} · {{ $order->delivery_date->toFormattedDateString() }}</p>
+            <p class="mt-2 text-xs text-muted-foreground">Source: {{ $order->order_source->label() }}</p>
+            @if ($order->origin->isAiDesigned())
+                <span class="mt-3 inline-flex rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">AI Designed</span>
+            @endif
             @if ($order->notes)
                 <p class="mt-3 text-sm">Notes: {{ $order->notes }}</p>
             @endif
@@ -23,7 +27,14 @@
                     </button>
                 @endforeach
             </div>
-            <p class="mt-4 text-lg font-bold">{{ $order->formattedSubtotal() }}</p>
+            <dl class="mt-4 space-y-1 text-sm">
+                <div class="flex justify-between gap-3"><dt class="text-muted-foreground">Items</dt><dd>{{ $order->formattedSubtotal() }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-muted-foreground">Add-ons</dt><dd>{{ \App\Support\Money::format($order->addons_total) }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-muted-foreground">Delivery / pickup</dt><dd>{{ \App\Support\Money::format($order->delivery_fee) }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-muted-foreground">Tax</dt><dd>{{ \App\Support\Money::format($order->tax_amount) }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-muted-foreground">Deposit</dt><dd>− {{ \App\Support\Money::format($order->deposit_paid) }}</dd></div>
+                <div class="flex justify-between gap-3 border-t border-border pt-2 text-base font-bold"><dt>Total due</dt><dd class="text-primary">{{ $order->formattedTotalDue() }}</dd></div>
+            </dl>
         </div>
     </div>
 

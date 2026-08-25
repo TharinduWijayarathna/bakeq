@@ -2,8 +2,11 @@
 
 namespace App\Livewire;
 
+use App\Enums\FulfillmentMethod;
 use App\Models\CartItem;
+use App\Models\ShopSetting;
 use App\Support\Money;
+use App\Support\OrderTotals;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -13,6 +16,8 @@ use Livewire\Component;
 #[Title('Your cart')]
 class CartPage extends Component
 {
+    public string $fulfillment_method = 'delivery';
+
     public function increment(int $itemId): void
     {
         $item = $this->ownedItem($itemId);
@@ -47,9 +52,23 @@ class CartPage extends Component
             ->latest()
             ->get();
 
+        $itemsSubtotal = $items->sum(fn (CartItem $item): int => $item->lineTotal());
+        $fulfillment = FulfillmentMethod::tryFrom($this->fulfillment_method) ?? FulfillmentMethod::Delivery;
+        $totals = OrderTotals::calculate($itemsSubtotal, fulfillment: $fulfillment);
+
         return view('livewire.cart-page', [
             'items' => $items,
-            'total' => Money::format($items->sum(fn (CartItem $item): int => $item->lineTotal())),
+            'totals' => $totals,
+            'formatted' => [
+                'subtotal' => Money::format($totals['subtotal']),
+                'addons_total' => Money::format($totals['addons_total']),
+                'delivery_fee' => Money::format($totals['delivery_fee']),
+                'tax_amount' => Money::format($totals['tax_amount']),
+                'deposit_paid' => Money::format($totals['deposit_paid']),
+                'total_due' => Money::format($totals['total_due']),
+            ],
+            'shop' => ShopSetting::current(),
+            'fulfillmentMethods' => FulfillmentMethod::cases(),
         ]);
     }
 

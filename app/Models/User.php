@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CustomerSource;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -21,13 +22,14 @@ use Illuminate\Support\Str;
  * @property string|null $address_line
  * @property string|null $city
  * @property UserRole $role
+ * @property CustomerSource $customer_source
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'phone', 'address_line', 'city', 'role'])]
+#[Fillable(['name', 'email', 'password', 'phone', 'address_line', 'city', 'role', 'customer_source'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -39,6 +41,7 @@ class User extends Authenticatable
      */
     protected $attributes = [
         'role' => 'customer',
+        'customer_source' => 'online',
     ];
 
     /**
@@ -52,6 +55,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'customer_source' => CustomerSource::class,
         ];
     }
 

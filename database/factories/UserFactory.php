@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\CustomerSource;
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -32,10 +33,18 @@ class UserFactory extends Factory
             'address_line' => fake()->streetAddress(),
             'city' => fake()->randomElement(['Colombo', 'Kandy', 'Galle', 'Negombo', 'Jaffna']),
             'role' => UserRole::Customer,
+            'customer_source' => CustomerSource::Online,
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    public function manual(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'customer_source' => CustomerSource::Manual,
+        ]);
     }
 
     /**

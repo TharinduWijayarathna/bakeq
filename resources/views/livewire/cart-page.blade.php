@@ -17,7 +17,7 @@
                     @endif
                     <div class="flex-1">
                         <h2 class="text-xl">{{ $item->displayName() }}</h2>
-                        <p class="text-sm text-primary font-bold">{{ \App\Support\Money::format($item->unit_price) }}</p>
+                        <p class="text-sm font-bold text-primary">{{ \App\Support\Money::format($item->unit_price) }}</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <button type="button" wire:click="decrement({{ $item->id }})" wire:loading.attr="disabled" wire:target="decrement({{ $item->id }})" class="grid size-9 place-items-center rounded-full bg-muted disabled:opacity-70" aria-label="Decrease quantity">
@@ -37,9 +37,33 @@
                 </article>
             @endforeach
         </div>
-        <div class="mt-8 flex items-center justify-between rounded-4xl bg-secondary p-6">
-            <span class="text-lg font-bold">Total</span>
-            <span class="text-2xl font-bold text-primary">{{ $total }}</span>
+
+        <div class="mt-6">
+            <label class="mb-2 block text-sm font-semibold">Fulfillment</label>
+            <div class="flex flex-wrap gap-2">
+                @foreach ($fulfillmentMethods as $method)
+                    <button
+                        type="button"
+                        wire:key="cart-fulfill-{{ $method->value }}"
+                        wire:click="$set('fulfillment_method', '{{ $method->value }}')"
+                        class="rounded-full px-4 py-2 text-sm font-semibold {{ $fulfillment_method === $method->value ? 'bg-primary text-primary-foreground' : 'bg-card shadow-soft' }}"
+                    >
+                        {{ $method->label() }}
+                    </button>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="mt-6 space-y-2 rounded-4xl bg-secondary p-6 text-sm">
+            <div class="flex justify-between gap-4"><span>Base / items</span><span class="font-semibold">{{ $formatted['subtotal'] }}</span></div>
+            <div class="flex justify-between gap-4"><span>Add-ons</span><span class="font-semibold">{{ $formatted['addons_total'] }}</span></div>
+            <div class="flex justify-between gap-4"><span>{{ $fulfillment_method === 'pickup' ? 'Pickup fee' : 'Delivery fee' }}</span><span class="font-semibold">{{ $formatted['delivery_fee'] }}</span></div>
+            <div class="flex justify-between gap-4"><span>Tax ({{ rtrim(rtrim(number_format((float) $shop->tax_percent, 2), '0'), '.') }}%)</span><span class="font-semibold">{{ $formatted['tax_amount'] }}</span></div>
+            <div class="flex justify-between gap-4"><span>Deposit paid</span><span class="font-semibold">− {{ $formatted['deposit_paid'] }}</span></div>
+            <div class="flex items-center justify-between gap-4 border-t border-border/60 pt-3 text-base">
+                <span class="font-bold">Total due</span>
+                <span class="text-2xl font-bold text-primary">{{ $formatted['total_due'] }}</span>
+            </div>
         </div>
         <a href="{{ route('checkout') }}" class="mt-6 inline-flex rounded-full bg-primary px-8 py-4 text-sm font-bold text-primary-foreground" wire:navigate>Checkout</a>
     @endif
