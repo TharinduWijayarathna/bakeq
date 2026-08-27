@@ -1,0 +1,53 @@
+%%{init: {'theme': 'dark'}}%%
+flowchart LR
+    Customer([Customer])
+    Admin([Admin / Manager])
+    Staff([Staff])
+    
+    subgraph BakeQ Customer Features
+        UC1(Browse Catalog & Gallery)
+        UC2(Manage Profile & Wishlist)
+        UC3(Manage Cart)
+        UC4(Design Custom Cake)
+        UC5(Chat with AI Assistant)
+        UC6(Checkout & Payment)
+        UC7(View Order History)
+    end
+
+    subgraph BakeQ Admin/Staff Features
+        UA1(Dashboard & Reports)
+        UA2(Manage Catalog & Recipes)
+        UA3(Inventory & Waste Management)
+        UA4(Production Board)
+        UA5(Manage Orders & Invoices)
+        UA6(POS Terminal)
+        UA7(Designer Settings)
+        UA8(Manage People & Shifts)
+        UA9(Manage Gallery & Content)
+        UA10(Audit Logs & AI Agent)
+    end
+    
+    Customer --> UC1
+    Customer --> UC2
+    Customer --> UC3
+    Customer --> UC4
+    Customer --> UC5
+    Customer --> UC6
+    Customer --> UC7
+    
+    Admin --> UA1
+    Admin --> UA2
+    Admin --> UA3
+    Admin --> UA4
+    Admin --> UA5
+    Admin --> UA6
+    Admin --> UA7
+    Admin --> UA8
+    Admin --> UA9
+    Admin --> UA10
+    
+    Staff --> UA3
+    Staff --> UA4
+    Staff --> UA5
+    Staff --> UA6
+    Staff --> UA8

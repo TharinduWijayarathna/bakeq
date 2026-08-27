@@ -1,0 +1,45 @@
+@startuml
+!theme materia-outline
+
+actor Customer
+actor "Admin/Staff" as Admin
+
+node "BakeQ Application Server" {
+    package "Presentation Layer" {
+        [Livewire Components] as Livewire
+        [Blade Templates] as Blade
+    }
+    
+    package "Application Layer" {
+        [Controllers]
+        [Routing]
+    }
+    
+    package "Domain Layer" {
+        [Eloquent Models] as Models
+        [Business Services] as Services
+    }
+}
+
+database "MySQL Database" as DB
+database "Redis (Cache/Session)" as Redis
+cloud "Stripe Payment Gateway" as Stripe
+
+Customer --> Routing : HTTP Request
+Admin --> Routing : HTTP Request
+
+Routing --> Livewire
+Routing --> Controllers
+
+Livewire --> Blade
+Livewire --> Models
+Livewire --> Services
+
+Controllers --> Models
+Controllers --> Services
+
+Models --> DB
+Services --> Redis
+Services --> Stripe
+
+@enduml

@@ -1,0 +1,70 @@
+@startuml
+!theme cyborg
+left to right direction
+
+actor Customer
+actor "Admin / Manager" as Admin
+actor Staff
+
+package "BakeQ Customer Interface" {
+  usecase "Browse Cakes & Catalog" as UC_Browse
+  usecase "View Gallery" as UC_Gallery
+  usecase "Manage Profile" as UC_Profile
+  usecase "Manage Wishlist" as UC_Wishlist
+  usecase "Manage Cart" as UC_Cart
+  usecase "Design Custom Cake" as UC_Design
+  usecase "Chat with AI Assistant" as UC_Assistant
+  usecase "Place Order & Checkout" as UC_Checkout
+  usecase "Process Payment" as UC_Payment
+  usecase "View Order History" as UC_OrderHistory
+}
+
+package "BakeQ Admin & Staff Interface" {
+  usecase "View Dashboard & Reports" as UA_Reports
+  usecase "Manage Categories & Cakes" as UA_Catalog
+  usecase "Manage Inventory & Waste" as UA_Inventory
+  usecase "Manage Recipes" as UA_Recipes
+  usecase "View Production Board" as UA_Production
+  usecase "Manage Orders & Invoices" as UA_Orders
+  usecase "Use POS Terminal" as UA_POS
+  usecase "Manage Designer Settings" as UA_Designer
+  usecase "Manage Customers & Employees" as UA_People
+  usecase "Manage Shifts" as UA_Shifts
+  usecase "Manage Content (Gallery, Testimonials)" as UA_Content
+  usecase "View Audit Logs" as UA_Audit
+  usecase "Chat with Admin AI Agent" as UA_AdminAgent
+}
+
+Customer --> UC_Browse
+Customer --> UC_Gallery
+Customer --> UC_Profile
+Customer --> UC_Wishlist
+Customer --> UC_Cart
+Customer --> UC_Design
+Customer --> UC_Assistant
+Customer --> UC_Checkout
+Customer --> UC_OrderHistory
+
+UC_Checkout .> UC_Payment : <<include>>
+
+Admin --> UA_Reports
+Admin --> UA_Catalog
+Admin --> UA_Inventory
+Admin --> UA_Recipes
+Admin --> UA_Production
+Admin --> UA_Orders
+Admin --> UA_POS
+Admin --> UA_Designer
+Admin --> UA_People
+Admin --> UA_Shifts
+Admin --> UA_Content
+Admin --> UA_Audit
+Admin --> UA_AdminAgent
+
+Staff --> UA_Production
+Staff --> UA_Orders
+Staff --> UA_POS
+Staff --> UA_Inventory
+Staff --> UA_Shifts
+
+@enduml

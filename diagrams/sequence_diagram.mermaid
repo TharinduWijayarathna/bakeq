@@ -1,0 +1,32 @@
+%%{init: {'theme': 'default'}}%%
+sequenceDiagram
+    autonumber
+    actor C as Customer
+    participant S as BakeQ System
+    participant PG as Stripe Gateway
+    actor A as Admin
+
+    C->>S: Add cakes to cart
+    S-->>C: Cart updated
+    C->>S: Checkout and confirm order
+    S->>PG: Initialize payment intent
+    PG-->>S: Payment token/session
+    S-->>C: Show payment form
+    
+    C->>PG: Submit payment details
+    
+    alt Payment Successful
+        PG-->>S: Webhook: Payment Success
+        S->>S: Update order status to "Paid"
+        S->>S: Generate Invoice
+        S-->>C: Order confirmation & Invoice
+        S->>A: Notify Admin of new order
+        A->>S: View order details
+        A->>S: Update order status to "Processing"
+        S-->>C: Notification: Order is processing
+    else Payment Failed
+        PG-->>S: Webhook: Payment Failed
+        S->>S: Update order status to "Failed"
+        S-->>C: Display payment error
+        C->>S: Retry payment
+    end

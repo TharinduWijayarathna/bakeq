@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Orders - Wireframe</title>
+    
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; background: #eaebec; margin: 0; padding: 20px; }
+    .wf-container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 20px; border: 1px solid #ccc; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .wf-header { border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .wf-logo { font-size: 24px; font-weight: bold; }
+    .wf-nav a { margin-left: 15px; text-decoration: none; color: #555; }
+    .wf-box { border: 2px dashed #aaa; padding: 20px; margin: 15px 0; background: #f9f9f9; text-align: center; color: #666; }
+    .wf-row { display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap; }
+    .wf-col { flex: 1; min-width: 250px; }
+    .wf-button { background: #444; color: white; padding: 10px 20px; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
+    .wf-img { background: #e0e0e0; height: 200px; display: flex; align-items: center; justify-content: center; border: 1px solid #ccc; color: #888; }
+    .wf-sidebar { width: 250px; border-right: 1px solid #ccc; padding-right: 20px; }
+    .wf-main { flex: 1; padding-left: 20px; }
+    .wf-footer { border-top: 1px solid #ccc; margin-top: 30px; padding-top: 15px; text-align: center; font-size: 14px; color: #777; }
+    .wf-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .wf-table th, .wf-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    .wf-table th { background: #eee; }
+</style>
+
+</head>
+<body>
+    <div class="wf-container">
+        
+        <div class="wf-header" style="background: #333333; color: white; padding: 15px; margin: -20px -20px 20px -20px;">
+            <div class="wf-logo">[ ADMIN LOGO ]</div>
+        </div>
+        
+        <div class="wf-row" style="margin: -20px;">
+            <div class="wf-sidebar" style="background: #444444; color: #ffffff; min-height: 800px; padding: 20px;">
+                <ul style="list-style: none; padding: 0; line-height: 2;">
+                    <li><a href="dashboard.html" style="color: #cccccc; text-decoration: none;">Dashboard</a></li>
+                    <li><a href="orders.html" style="color: white; text-decoration: none;">Orders</a></li>
+                    <li><a href="#" style="color: #cccccc; text-decoration: none;">Cakes & Products</a></li>
+                    <li><a href="inventory.html" style="color: #cccccc; text-decoration: none;">Inventory & Recipes</a></li>
+                </ul>
+            </div>
+            <div class="wf-main" style="padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>Orders Management</h2>
+                    <input type="text" placeholder="Search orders..." style="padding: 5px;">
+                </div>
+                
+                <div class="wf-box" style="text-align: left; background: white; border: 1px solid #ccc;">
+                    <table class="wf-table">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                        <tr>
+                            <td><a href="#">#ORD-9921</a></td>
+                            <td>John Doe</td>
+                            <td>Oct 12, 2026</td>
+                            <td><select><option>Pending</option><option>Baking</option><option selected>Ready</option></select></td>
+                            <td>Paid</td>
+                            <td>$105.00</td>
+                            <td><button>Print Invoice</button> <button>Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td><a href="#">#ORD-9922</a></td>
+                            <td>Sarah Smith</td>
+                            <td>Oct 12, 2026</td>
+                            <td><select><option selected>Pending</option><option>Baking</option></select></td>
+                            <td>Unpaid</td>
+                            <td>$45.00</td>
+                            <td><button>Print Invoice</button> <button>Edit</button></td>
+                        </tr>
+                    </table>
+                    <div style="margin-top: 15px; text-align: right;">Pagination: [1] 2 3</div>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer - Assistant - Wireframe</title>
+    
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; background: #eaebec; margin: 0; padding: 20px; }
+    .wf-container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 20px; border: 1px solid #ccc; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .wf-header { border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .wf-logo { font-size: 24px; font-weight: bold; }
+    .wf-nav a { margin-left: 15px; text-decoration: none; color: #555; }
+    .wf-box { border: 2px dashed #aaa; padding: 20px; margin: 15px 0; background: #f9f9f9; text-align: center; color: #666; }
+    .wf-row { display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap; }
+    .wf-col { flex: 1; min-width: 250px; }
+    .wf-button { background: #444; color: white; padding: 10px 20px; border: none; cursor: pointer; text-decoration: none; display: inline-block; }
+    .wf-button { background: #666666; }
+    .wf-img { background: #e0e0e0; height: 200px; display: flex; align-items: center; justify-content: center; border: 1px solid #ccc; color: #888; }
+    .wf-sidebar { width: 250px; border-right: 1px solid #ccc; padding-right: 20px; }
+    .wf-main { flex: 1; padding-left: 20px; }
+    .wf-footer { border-top: 1px solid #ccc; margin-top: 30px; padding-top: 15px; text-align: center; font-size: 14px; color: #777; }
+    .wf-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .wf-table th, .wf-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    .wf-table th { background: #eee; }
+</style>
+
+</head>
+<body>
+    <div class="wf-container">
+        
+        <div class="wf-header">
+            <div class="wf-logo">[ LOGO ]</div>
+            <div class="wf-nav">
+                <a href="home.html">Home</a>
+                <a href="shop.html">Shop</a>
+            </div>
+        </div>
+        
+        <div class="wf-container" style="max-width: 600px;">
+            <h2>BakeQ AI Assistant</h2>
+            <div class="wf-box" style="height: 400px; text-align: left; overflow-y: auto; background: #fff;">
+                <div style="margin-bottom: 15px;">
+                    <strong style="color: #555555;">BakeQ Bot:</strong>
+                    <p style="background: #eeeeee; padding: 10px; border-radius: 5px; display: inline-block; margin: 5px 0;">Hello! I'm the BakeQ Assistant. I can help you find the perfect cake, check your order status, or suggest custom designs based on your theme. How can I help today?</p>
+                </div>
+                <div style="margin-bottom: 15px; text-align: right;">
+                    <strong style="color: #666666;">You:</strong><br>
+                    <p style="background: #eeeeee; padding: 10px; border-radius: 5px; display: inline-block; margin: 5px 0; text-align: left;">Do you have any vegan options for a birthday?</p>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <strong style="color: #555555;">BakeQ Bot:</strong>
+                    <p style="background: #eeeeee; padding: 10px; border-radius: 5px; display: inline-block; margin: 5px 0;">Yes! We have a delicious Vegan Chocolate Fudge Cake and a Vegan Berry Delight. Would you like to see them?</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <input type="text" placeholder="Type your message..." style="flex: 1; padding: 10px; border: 1px solid #ccc;">
+                <button class="wf-button">Send</button>
+            </div>
+        </div>
+    
+    </div>
+</body>
+</html>

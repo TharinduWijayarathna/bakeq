@@ -1,0 +1,72 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#aaddff'}}}%%
+classDiagram
+    class User {
+        +int id
+        +string name
+        +string email
+        +string role
+        +login()
+        +logout()
+        +hasRole(role)
+    }
+    
+    class Order {
+        +int id
+        +int user_id
+        +string status
+        +float total_amount
+        +calculateTotal()
+        +markAsPaid()
+    }
+    
+    class OrderItem {
+        +int id
+        +int order_id
+        +int cake_id
+        +int quantity
+        +float price
+        +getSubtotal()
+    }
+    
+    class Cake {
+        +int id
+        +string name
+        +string description
+        +float base_price
+        +isAvailable()
+    }
+    
+    class Category {
+        +int id
+        +string name
+        +getCakes()
+    }
+    
+    class Shift {
+        +int id
+        +int user_id
+        +datetime start_time
+        +datetime end_time
+        +clockIn()
+        +clockOut()
+    }
+
+    class Recipe {
+        +int id
+        +string name
+        +calculateCost()
+    }
+
+    class Ingredient {
+        +int id
+        +string name
+        +float stock
+        +reduceStock(amount)
+    }
+    
+    User "1" -- "*" Order : places
+    User "1" -- "*" Shift : works
+    Order "1" *-- "*" OrderItem : contains
+    Cake "1" -- "*" OrderItem : in
+    Category "1" -- "*" Cake : groups
+    Recipe "1" -- "*" Ingredient : requires

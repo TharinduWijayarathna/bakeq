@@ -1,0 +1,38 @@
+%%{init: {'theme': 'neutral'}}%%
+flowchart TD
+    Customer([Customer])
+    Admin([Admin/Staff])
+    
+    subgraph BakeQ System
+        Router[Laravel Router]
+        subgraph Frontend
+            Livewire[Livewire Components]
+            Blade[Blade Templates]
+        end
+        subgraph Backend
+            Controllers[Controllers / Actions]
+            Models[Eloquent Models]
+            Services[Business Logic Services]
+        end
+        DB[(MySQL Database)]
+        Redis[(Redis Cache/Queue)]
+    end
+    
+    Stripe([Stripe Payment Gateway])
+    
+    Customer -->|HTTP/HTTPS| Router
+    Admin -->|HTTP/HTTPS| Router
+    
+    Router --> Livewire
+    Router --> Controllers
+    
+    Livewire --> Blade
+    Livewire --> Models
+    Livewire --> Services
+    
+    Controllers --> Models
+    Controllers --> Services
+    
+    Models --> DB
+    Services --> Stripe
+    Services --> Redis

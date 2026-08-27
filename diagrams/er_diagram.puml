@@ -1,0 +1,122 @@
+@startuml
+!theme cerulean
+skinparam classFontColor automatic
+skinparam classHeaderBackgroundColor #444
+
+title BakeQ Entity Relationship Diagram
+
+entity "User" as user {
+  * id : bigint
+  --
+  name : varchar
+  email : varchar
+  role : enum
+}
+
+entity "Order" as order {
+  * id : bigint
+  --
+  user_id : bigint
+  status : varchar
+  total_amount : decimal
+}
+
+entity "OrderItem" as order_item {
+  * id : bigint
+  --
+  order_id : bigint
+  cake_id : bigint
+  quantity : int
+  price : decimal
+}
+
+entity "Cake" as cake {
+  * id : bigint
+  --
+  category_id : bigint
+  name : varchar
+  price : decimal
+}
+
+entity "Category" as category {
+  * id : bigint
+  --
+  name : varchar
+}
+
+entity "CakeDesign" as design {
+  * id : bigint
+  --
+  order_id : bigint
+}
+
+entity "Ingredient" as ingredient {
+  * id : bigint
+  --
+  name : varchar
+  stock : decimal
+}
+
+entity "Recipe" as recipe {
+  * id : bigint
+  --
+  name : varchar
+}
+
+entity "RecipeItem" as recipe_item {
+  * id : bigint
+  --
+  recipe_id : bigint
+  ingredient_id : bigint
+  quantity : decimal
+}
+
+entity "Invoice" as invoice {
+  * id : bigint
+  --
+  order_id : bigint
+  amount : decimal
+}
+
+entity "Shift" as shift {
+  * id : bigint
+  --
+  user_id : bigint
+  start_time : datetime
+}
+
+entity "ShiftEntry" as shift_entry {
+  * id : bigint
+  --
+  shift_id : bigint
+  action : varchar
+}
+
+entity "AuditLog" as audit {
+  * id : bigint
+  --
+  user_id : bigint
+  action : text
+}
+
+entity "WasteEntry" as waste {
+  * id : bigint
+  --
+  ingredient_id : bigint
+  amount : decimal
+}
+
+user ||--o{ order
+order ||--|{ order_item
+category ||--o{ cake
+cake ||--o{ order_item
+recipe ||--|{ recipe_item
+ingredient ||--o{ recipe_item
+ingredient ||--o{ waste
+order ||--o| invoice
+order ||--o| design
+user ||--o{ shift
+shift ||--|{ shift_entry
+user ||--o{ audit
+
+@enduml

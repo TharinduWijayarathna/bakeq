@@ -1,0 +1,84 @@
+@startuml
+!theme bluegray
+
+class User {
+  +int id
+  +string name
+  +string email
+  +string role
+  +login()
+  +logout()
+  +hasRole(role: string): bool
+}
+
+class Order {
+  +int id
+  +int user_id
+  +string status
+  +float total_amount
+  +calculateTotal(): float
+  +markAsPaid(): void
+}
+
+class OrderItem {
+  +int id
+  +int order_id
+  +int cake_id
+  +int quantity
+  +float price
+  +getSubtotal(): float
+}
+
+class Cake {
+  +int id
+  +string name
+  +string description
+  +float base_price
+  +isAvailable(): bool
+}
+
+class Category {
+  +int id
+  +string name
+  +getCakes(): array
+}
+
+class Recipe {
+  +int id
+  +string name
+  +calculateCost(): float
+}
+
+class Ingredient {
+  +int id
+  +string name
+  +float stock
+  +float unit_price
+  +reduceStock(amount)
+}
+
+class Invoice {
+  +int id
+  +int order_id
+  +string invoice_number
+  +generatePDF()
+}
+
+class Shift {
+  +int id
+  +int user_id
+  +datetime start_time
+  +datetime end_time
+  +clockIn()
+  +clockOut()
+}
+
+User "1" -- "0..*" Order : places >
+User "1" -- "0..*" Shift : works >
+Order "1" *-- "1..*" OrderItem : contains >
+Order "1" -- "0..1" Invoice : generates >
+Cake "1" -- "0..*" OrderItem : part of <
+Category "1" -- "0..*" Cake : organizes >
+Recipe "1" -- "1..*" Ingredient : requires >
+
+@enduml

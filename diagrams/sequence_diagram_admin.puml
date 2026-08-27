@@ -1,0 +1,30 @@
+@startuml
+!theme mars
+
+actor Admin as A
+participant "BakeQ System" as S
+database Database as DB
+
+autonumber
+
+A -> S: Request Production Board
+S -> DB: Fetch pending orders & recipes
+DB --> S: Data returned
+S --> A: Display Production Board
+
+A -> S: Mark order item as "In Production"
+S -> DB: Update item status
+S -> DB: Deduct ingredients from inventory
+
+alt Sufficient Inventory
+    DB --> S: Success
+    S --> A: Show success message & update board
+else Insufficient Inventory
+    DB --> S: Error (Not enough stock)
+    S -> S: Log Stock Alert
+    S --> A: Show error message "Low Stock"
+    A -> S: Restock Inventory
+    S -> DB: Update inventory levels
+end
+
+@enduml

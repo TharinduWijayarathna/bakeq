@@ -1,0 +1,31 @@
+%%{init: {'theme': 'default'}}%%
+sequenceDiagram
+    autonumber
+    actor C as Walk-in Customer
+    actor St as Staff
+    participant POS as POS System
+    participant DB as Database
+
+    C->>St: Requests items
+    St->>POS: Add items to POS Cart
+    POS->>DB: Check item availability
+    DB-->>POS: Items available
+    POS-->>St: Update POS Cart display
+    
+    St->>POS: Initiate Checkout
+    POS-->>St: Prompt for Payment Method
+    
+    alt Cash Payment
+        St->>POS: Select Cash & Enter Amount
+        POS->>POS: Calculate change
+        POS->>DB: Record Order as Paid
+        POS-->>St: Open cash drawer, print receipt
+    else Card Payment
+        St->>POS: Select Card Payment
+        POS->>DB: Process via Terminal
+        DB-->>POS: Payment Approved
+        POS->>DB: Record Order as Paid
+        POS-->>St: Print receipt
+    end
+    
+    St->>C: Hand over receipt & items

@@ -1,0 +1,29 @@
+---
+title: BakeQ Entity Relationship Diagram
+---
+erDiagram
+    %%{init: {'theme': 'forest'}}%%
+    USER ||--o{ ORDER : places
+    USER ||--o{ SHIFT : works
+    USER ||--o{ WISHLIST_ITEM : has
+    USER ||--o{ CART_ITEM : has
+    USER ||--o{ TESTIMONIAL : writes
+    USER ||--o{ AUDIT_LOG : generates
+    USER ||--o{ ASSISTANT_MESSAGE : interacts
+    
+    CATEGORY ||--o{ CAKE : contains
+    CAKE ||--o{ ORDER_ITEM : included_in
+    CAKE ||--o{ WISHLIST_ITEM : added_to
+    CAKE ||--o{ CART_ITEM : added_to
+    
+    ORDER ||--|{ ORDER_ITEM : contains
+    ORDER ||--o| INVOICE : generates
+    ORDER ||--o| CAKE_DESIGN : may_have
+    
+    RECIPE ||--|{ RECIPE_ITEM : contains
+    INGREDIENT ||--o{ RECIPE_ITEM : used_in
+    INGREDIENT ||--o{ WASTE_ENTRY : records
+    
+    SHIFT ||--|{ SHIFT_ENTRY : logs
+    
+    DESIGNER_OPTION_GROUP ||--o{ DESIGNER_OPTION : contains
