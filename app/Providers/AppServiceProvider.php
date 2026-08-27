@@ -7,10 +7,10 @@ use App\Ai\GeminiCakePreviewGenerator;
 use App\Ai\GeminiPromptCakeImageGenerator;
 use App\Contracts\CakeKnowledgeAssistant;
 use App\Contracts\CakePreviewGenerator;
-use App\Contracts\IpgGateway;
 use App\Contracts\PromptCakeImageGenerator;
+use App\Contracts\StripeGateway;
 use App\Models\User;
-use App\Services\HostedCheckoutIpgGateway;
+use App\Services\StripeCheckoutGateway;
 use App\Support\Brand;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CakePreviewGenerator::class, GeminiCakePreviewGenerator::class);
         $this->app->bind(PromptCakeImageGenerator::class, GeminiPromptCakeImageGenerator::class);
         $this->app->bind(CakeKnowledgeAssistant::class, GeminiCakeKnowledgeAssistant::class);
-        $this->app->bind(IpgGateway::class, HostedCheckoutIpgGateway::class);
+        $this->app->bind(StripeGateway::class, StripeCheckoutGateway::class);
     }
 
     /**

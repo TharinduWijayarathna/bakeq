@@ -37,7 +37,7 @@
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Website checkout</p>
                     <p class="mt-1 text-sm font-semibold">Online payments</p>
-                    <p class="mt-0.5 text-xs text-muted-foreground">When off, customers can only choose pay later. Payment confirmation uses the return URL unless IPG webhooks are enabled in env.</p>
+                    <p class="mt-0.5 text-xs text-muted-foreground">When off, customers can only choose pay later. Payment confirmation uses the return URL unless STRIPE_WEBHOOKS_ENABLED is on.</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <label class="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold">

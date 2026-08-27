@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\InvoiceDownloadController;
 use App\Http\Controllers\CheckoutPaymentController;
-use App\Http\Controllers\IpgWebhookController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Livewire\Admin\AdminAgentChat;
 use App\Livewire\Admin\AuditLogIndex;
 use App\Livewire\Admin\CakeForm;
@@ -60,7 +60,7 @@ Route::post('/logout', function () {
     return redirect()->route('home');
 })->middleware('auth')->name('logout');
 
-Route::post('/webhooks/ipg', IpgWebhookController::class)->name('webhooks.ipg');
+Route::post('/webhooks/stripe', StripeWebhookController::class)->name('webhooks.stripe');
 
 Route::middleware('auth')->group(function (): void {
     Route::livewire('/designer', CakeDesigner::class)->name('designer');

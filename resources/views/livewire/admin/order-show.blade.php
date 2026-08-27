@@ -69,7 +69,7 @@
             </div>
             <div class="sm:col-span-2">
                 <dt class="text-muted-foreground">Payment reference</dt>
-                <dd class="font-mono text-xs">{{ $order->ipg_payment_id ?: ($order->ipg_checkout_id ?: '—') }}</dd>
+                <dd class="font-mono text-xs">{{ $order->stripe_payment_id ?: ($order->stripe_checkout_id ?: '—') }}</dd>
             </div>
         </dl>
         @error('payment')

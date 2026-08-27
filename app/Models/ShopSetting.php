@@ -95,7 +95,7 @@ class ShopSetting extends Model
 
     public function acceptsOnlinePayments(): bool
     {
-        return $this->online_payments_enabled && (bool) config('ipg.enabled') && filled(config('ipg.secret_key'));
+        return $this->online_payments_enabled && (bool) config('stripe.enabled') && filled(config('stripe.secret_key'));
     }
 
     public function formattedDeliveryFee(): string

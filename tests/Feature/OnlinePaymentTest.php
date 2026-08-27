@@ -1,8 +1,8 @@
 <?php
 
 use App\Actions\AddToCart;
-use App\Actions\MarkOrderPaidFromIpg;
-use App\Contracts\IpgGateway;
+use App\Actions\MarkOrderPaidFromStripe;
+use App\Contracts\StripeGateway;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Livewire\Admin\OrderShow;
@@ -52,11 +52,11 @@ test('customers can place a pay later order without online payment', function ()
 
 test('customers paying full online are redirected to the payment gateway', function () {
     config([
-        'ipg.enabled' => true,
-        'ipg.secret_key' => 'test_secret_key',
+        'stripe.enabled' => true,
+        'stripe.secret_key' => 'test_secret_key',
     ]);
 
-    $this->mock(IpgGateway::class, function ($mock): void {
+    $this->mock(StripeGateway::class, function ($mock): void {
         $mock->shouldReceive('createCheckoutSession')
             ->once()
             ->andReturn([
@@ -89,16 +89,16 @@ test('customers paying full online are redirected to the payment gateway', funct
         ->and($order->payment_status)->toBe(PaymentStatus::AwaitingPayment)
         ->and($order->payment_amount)->toBe(500000)
         ->and($order->deposit_paid)->toBe(0)
-        ->and($order->ipg_checkout_id)->toBe('cs_test_full');
+        ->and($order->stripe_checkout_id)->toBe('cs_test_full');
 });
 
 test('customers can start an online deposit payment when deposit percent is set', function () {
     config([
-        'ipg.enabled' => true,
-        'ipg.secret_key' => 'test_secret_key',
+        'stripe.enabled' => true,
+        'stripe.secret_key' => 'test_secret_key',
     ]);
 
-    $this->mock(IpgGateway::class, function ($mock): void {
+    $this->mock(StripeGateway::class, function ($mock): void {
         $mock->shouldReceive('createCheckoutSession')
             ->once()
             ->andReturn([
@@ -126,8 +126,8 @@ test('customers can start an online deposit payment when deposit percent is set'
         ->and($order->payment_status)->toBe(PaymentStatus::AwaitingPayment);
 });
 
-test('ipg webhook marks a full payment as paid when webhooks are enabled', function () {
-    config(['ipg.webhooks_enabled' => true]);
+test('stripe webhook marks a full payment as paid when webhooks are enabled', function () {
+    config(['stripe.webhooks_enabled' => true]);
 
     $order = Order::factory()->create([
         'subtotal' => 450000,
@@ -139,10 +139,10 @@ test('ipg webhook marks a full payment as paid when webhooks are enabled', funct
         'payment_method' => PaymentMethod::Online,
         'payment_status' => PaymentStatus::AwaitingPayment,
         'payment_amount' => 500000,
-        'ipg_checkout_id' => 'cs_test_webhook',
+        'stripe_checkout_id' => 'cs_test_webhook',
     ]);
 
-    $this->mock(IpgGateway::class, function ($mock): void {
+    $this->mock(StripeGateway::class, function ($mock): void {
         $mock->shouldReceive('parseWebhook')
             ->once()
             ->andReturn([
@@ -155,8 +155,8 @@ test('ipg webhook marks a full payment as paid when webhooks are enabled', funct
             ]);
     });
 
-    $this->post('/webhooks/ipg', [], [
-        'HTTP_X-Ipg-Signature' => 'sig_test',
+    $this->post('/webhooks/stripe', [], [
+        'HTTP_Stripe-Signature' => 'sig_test',
     ])->assertOk();
 
     $order->refresh();
@@ -165,33 +165,33 @@ test('ipg webhook marks a full payment as paid when webhooks are enabled', funct
         ->and($order->deposit_paid)->toBe(500000)
         ->and($order->total_due)->toBe(0)
         ->and($order->payment_amount)->toBe(500000)
-        ->and($order->ipg_payment_id)->toBe('pi_test_123')
+        ->and($order->stripe_payment_id)->toBe('pi_test_123')
         ->and($order->paid_at)->not->toBeNull();
 });
 
-test('ipg webhook endpoint is a no-op when webhooks are disabled', function () {
-    config(['ipg.webhooks_enabled' => false]);
+test('stripe webhook endpoint is a no-op when webhooks are disabled', function () {
+    config(['stripe.webhooks_enabled' => false]);
 
     $order = Order::factory()->create([
         'payment_status' => PaymentStatus::AwaitingPayment,
         'payment_amount' => 500000,
-        'ipg_checkout_id' => 'cs_ignored',
+        'stripe_checkout_id' => 'cs_ignored',
     ]);
 
-    $this->mock(IpgGateway::class, function ($mock): void {
+    $this->mock(StripeGateway::class, function ($mock): void {
         $mock->shouldReceive('parseWebhook')->never();
     });
 
-    $this->post('/webhooks/ipg')->assertOk()->assertSee('Webhooks disabled');
+    $this->post('/webhooks/stripe')->assertOk()->assertSee('Webhooks disabled');
 
     expect($order->fresh()->payment_status)->toBe(PaymentStatus::AwaitingPayment);
 });
 
 test('success return url confirms payment by retrieving the checkout session', function () {
     config([
-        'ipg.enabled' => true,
-        'ipg.secret_key' => 'test_secret_key',
-        'ipg.webhooks_enabled' => false,
+        'stripe.enabled' => true,
+        'stripe.secret_key' => 'test_secret_key',
+        'stripe.webhooks_enabled' => false,
     ]);
 
     $user = customer();
@@ -206,10 +206,10 @@ test('success return url confirms payment by retrieving the checkout session', f
         'payment_method' => PaymentMethod::Online,
         'payment_status' => PaymentStatus::AwaitingPayment,
         'payment_amount' => 500000,
-        'ipg_checkout_id' => 'cs_return',
+        'stripe_checkout_id' => 'cs_return',
     ]);
 
-    $this->mock(IpgGateway::class, function ($mock): void {
+    $this->mock(StripeGateway::class, function ($mock): void {
         $mock->shouldReceive('retrieveCheckoutSession')
             ->once()
             ->with('cs_return')
@@ -229,11 +229,11 @@ test('success return url confirms payment by retrieving the checkout session', f
     $order->refresh();
 
     expect($order->payment_status)->toBe(PaymentStatus::Paid)
-        ->and($order->ipg_payment_id)->toBe('pi_return')
+        ->and($order->stripe_payment_id)->toBe('pi_return')
         ->and($order->total_due)->toBe(0);
 });
 
-test('ipg webhook marks a deposit payment as partially paid', function () {
+test('marking a deposit payment sets partially paid', function () {
     $order = Order::factory()->create([
         'subtotal' => 450000,
         'delivery_fee' => 50000,
@@ -244,10 +244,10 @@ test('ipg webhook marks a deposit payment as partially paid', function () {
         'payment_method' => PaymentMethod::Online,
         'payment_status' => PaymentStatus::AwaitingPayment,
         'payment_amount' => 250000,
-        'ipg_checkout_id' => 'cs_test_deposit_wh',
+        'stripe_checkout_id' => 'cs_test_deposit_wh',
     ]);
 
-    app(MarkOrderPaidFromIpg::class)->handle($order, [
+    app(MarkOrderPaidFromStripe::class)->handle($order, [
         'checkout_id' => 'cs_test_deposit_wh',
         'payment_id' => 'pi_deposit',
         'amount_total' => 250000,
@@ -260,7 +260,7 @@ test('ipg webhook marks a deposit payment as partially paid', function () {
         ->and($order->total_due)->toBe(250000);
 });
 
-test('marking order paid from ipg is idempotent', function () {
+test('marking order paid from stripe is idempotent', function () {
     $order = Order::factory()->create([
         'subtotal' => 450000,
         'delivery_fee' => 50000,
@@ -270,10 +270,10 @@ test('marking order paid from ipg is idempotent', function () {
         'total_due' => 500000,
         'payment_status' => PaymentStatus::AwaitingPayment,
         'payment_amount' => 500000,
-        'ipg_checkout_id' => 'cs_once',
+        'stripe_checkout_id' => 'cs_once',
     ]);
 
-    $mark = app(MarkOrderPaidFromIpg::class);
+    $mark = app(MarkOrderPaidFromStripe::class);
     $mark->handle($order, [
         'checkout_id' => 'cs_once',
         'payment_id' => 'pi_once',
@@ -287,7 +287,7 @@ test('marking order paid from ipg is idempotent', function () {
 
     $order->refresh();
 
-    expect($order->ipg_payment_id)->toBe('pi_once')
+    expect($order->stripe_payment_id)->toBe('pi_once')
         ->and($order->payment_status)->toBe(PaymentStatus::Paid);
 });
 
@@ -317,13 +317,13 @@ test('admin can mark outstanding balance as collected', function () {
         ->and($order->deposit_paid)->toBe(500000);
 });
 
-test('admin order show displays payment details', function () {
+test('admin order show displays payment details without branding the provider in labels', function () {
     $admin = adminUser();
     $order = Order::factory()->create([
         'payment_method' => PaymentMethod::Online,
         'payment_status' => PaymentStatus::Paid,
         'payment_amount' => 500000,
-        'ipg_payment_id' => 'pi_visible',
+        'stripe_payment_id' => 'pi_visible',
         'paid_at' => now(),
     ]);
 
@@ -333,5 +333,6 @@ test('admin order show displays payment details', function () {
         ->assertSee('Online payment')
         ->assertSee('Paid')
         ->assertSee('pi_visible')
+        ->assertSee('Payment reference')
         ->assertDontSee('Stripe');
 });

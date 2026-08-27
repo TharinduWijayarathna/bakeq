@@ -41,8 +41,8 @@ use Illuminate\Support\Carbon;
  * @property PaymentMethod|null $payment_method
  * @property PaymentStatus $payment_status
  * @property int $payment_amount
- * @property string|null $ipg_checkout_id
- * @property string|null $ipg_payment_id
+ * @property string|null $stripe_checkout_id
+ * @property string|null $stripe_payment_id
  * @property Carbon|null $paid_at
  * @property string|null $receipt_number
  * @property Carbon $delivery_date
@@ -73,8 +73,8 @@ use Illuminate\Support\Carbon;
     'payment_method',
     'payment_status',
     'payment_amount',
-    'ipg_checkout_id',
-    'ipg_payment_id',
+    'stripe_checkout_id',
+    'stripe_payment_id',
     'paid_at',
     'receipt_number',
     'delivery_date',

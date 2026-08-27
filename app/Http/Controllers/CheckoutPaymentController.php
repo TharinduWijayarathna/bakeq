@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\MarkOrderPaidFromIpg;
-use App\Contracts\IpgGateway;
+use App\Actions\MarkOrderPaidFromStripe;
+use App\Contracts\StripeGateway;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
@@ -15,13 +15,13 @@ class CheckoutPaymentController extends Controller
     public function success(
         Request $request,
         Order $order,
-        IpgGateway $gateway,
-        MarkOrderPaidFromIpg $markPaid,
+        StripeGateway $gateway,
+        MarkOrderPaidFromStripe $markPaid,
     ): RedirectResponse {
         abort_unless($order->user_id === $request->user()?->id, 403);
 
         if ($order->payment_status === PaymentStatus::AwaitingPayment || $order->payment_status === PaymentStatus::Failed) {
-            $checkoutId = (string) ($request->query('session_id') ?: $order->ipg_checkout_id);
+            $checkoutId = (string) ($request->query('session_id') ?: $order->stripe_checkout_id);
 
             if ($checkoutId === '') {
                 session()->flash('status', 'Payment for order #'.$order->id.' is still pending confirmation.');

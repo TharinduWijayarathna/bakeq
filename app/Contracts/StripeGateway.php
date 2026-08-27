@@ -4,7 +4,7 @@ namespace App\Contracts;
 
 use App\Models\Order;
 
-interface IpgGateway
+interface StripeGateway
 {
     /**
      * @param  array{success_url: string, cancel_url: string}  $urls

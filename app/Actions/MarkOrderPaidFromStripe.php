@@ -6,7 +6,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 
-class MarkOrderPaidFromIpg
+class MarkOrderPaidFromStripe
 {
     /**
      * @param  array{
@@ -22,7 +22,7 @@ class MarkOrderPaidFromIpg
             $locked = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
 
             if (in_array($locked->payment_status, [PaymentStatus::Paid, PaymentStatus::PartiallyPaid], true)
-                && filled($locked->ipg_payment_id)) {
+                && filled($locked->stripe_payment_id)) {
                 return $locked;
             }
 
@@ -42,8 +42,8 @@ class MarkOrderPaidFromIpg
                 'total_due' => $remaining,
                 'payment_amount' => $charged,
                 'payment_status' => $status,
-                'ipg_checkout_id' => $payload['checkout_id'] ?? $locked->ipg_checkout_id,
-                'ipg_payment_id' => $payload['payment_id'] ?? $locked->ipg_payment_id,
+                'stripe_checkout_id' => $payload['checkout_id'] ?? $locked->stripe_checkout_id,
+                'stripe_payment_id' => $payload['payment_id'] ?? $locked->stripe_payment_id,
                 'paid_at' => $locked->paid_at ?? now(),
             ]);
 

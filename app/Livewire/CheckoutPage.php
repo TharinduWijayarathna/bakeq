@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Actions\CreateIpgCheckoutSession;
+use App\Actions\CreateStripeCheckoutSession;
 use App\Actions\PlaceOrder;
 use App\Enums\CheckoutPaymentChoice;
 use App\Enums\FulfillmentMethod;
@@ -45,7 +45,7 @@ class CheckoutPage extends Component
         }
     }
 
-    public function placeOrder(PlaceOrder $placeOrder, CreateIpgCheckoutSession $createSession): void
+    public function placeOrder(PlaceOrder $placeOrder, CreateStripeCheckoutSession $createSession): void
     {
         $settings = DesignerSetting::current();
         $shop = ShopSetting::current();

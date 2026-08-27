@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\MarkOrderPaidFromIpg;
-use App\Contracts\IpgGateway;
+use App\Actions\MarkOrderPaidFromStripe;
+use App\Contracts\StripeGateway;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -11,19 +11,15 @@ use Illuminate\Http\Response;
 use RuntimeException;
 use Throwable;
 
-class IpgWebhookController extends Controller
+class StripeWebhookController extends Controller
 {
-    public function __invoke(Request $request, IpgGateway $gateway, MarkOrderPaidFromIpg $markPaid): Response
+    public function __invoke(Request $request, StripeGateway $gateway, MarkOrderPaidFromStripe $markPaid): Response
     {
-        if (! config('ipg.webhooks_enabled')) {
+        if (! config('stripe.webhooks_enabled')) {
             return response('Webhooks disabled', 200);
         }
 
-        $signature = (string) (
-            $request->header('Stripe-Signature')
-            ?: $request->header('X-Ipg-Signature')
-            ?: ''
-        );
+        $signature = (string) $request->header('Stripe-Signature', '');
 
         try {
             $event = $gateway->parseWebhook($request->getContent(), $signature);
@@ -42,7 +38,7 @@ class IpgWebhookController extends Controller
         $order = null;
 
         if (filled($event['checkout_id'])) {
-            $order = Order::query()->where('ipg_checkout_id', $event['checkout_id'])->first();
+            $order = Order::query()->where('stripe_checkout_id', $event['checkout_id'])->first();
         }
 
         if ($order === null && filled($event['order_id'])) {

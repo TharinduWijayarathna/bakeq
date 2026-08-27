@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->validateCsrfTokens(except: [
-            'webhooks/ipg',
+            'webhooks/stripe',
         ]);
 
         $middleware->redirectGuestsTo(fn (): string => route('login'));

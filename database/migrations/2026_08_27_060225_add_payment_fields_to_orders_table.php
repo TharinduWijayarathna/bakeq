@@ -11,12 +11,12 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->string('payment_status')->default('unpaid')->after('payment_method');
             $table->unsignedInteger('payment_amount')->default(0)->after('payment_status');
-            $table->string('ipg_checkout_id')->nullable()->after('payment_amount');
-            $table->string('ipg_payment_id')->nullable()->after('ipg_checkout_id');
-            $table->timestamp('paid_at')->nullable()->after('ipg_payment_id');
+            $table->string('stripe_checkout_id')->nullable()->after('payment_amount');
+            $table->string('stripe_payment_id')->nullable()->after('stripe_checkout_id');
+            $table->timestamp('paid_at')->nullable()->after('stripe_payment_id');
 
             $table->index('payment_status');
-            $table->index('ipg_checkout_id');
+            $table->index('stripe_checkout_id');
         });
     }
 
@@ -24,12 +24,12 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->dropIndex(['payment_status']);
-            $table->dropIndex(['ipg_checkout_id']);
+            $table->dropIndex(['stripe_checkout_id']);
             $table->dropColumn([
                 'payment_status',
                 'payment_amount',
-                'ipg_checkout_id',
-                'ipg_payment_id',
+                'stripe_checkout_id',
+                'stripe_payment_id',
                 'paid_at',
             ]);
         });

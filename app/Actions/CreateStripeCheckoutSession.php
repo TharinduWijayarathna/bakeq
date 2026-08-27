@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-use App\Contracts\IpgGateway;
+use App\Contracts\StripeGateway;
 use App\Enums\CheckoutPaymentChoice;
 use App\Enums\PaymentStatus;
 use App\Models\Order;
@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
 
-class CreateIpgCheckoutSession
+class CreateStripeCheckoutSession
 {
-    public function __construct(private IpgGateway $gateway) {}
+    public function __construct(private StripeGateway $gateway) {}
 
     /**
      * @return array{id: string, url: string}
@@ -53,7 +53,7 @@ class CreateIpgCheckoutSession
         }
 
         $order->update([
-            'ipg_checkout_id' => $session['id'],
+            'stripe_checkout_id' => $session['id'],
         ]);
 
         return $session;

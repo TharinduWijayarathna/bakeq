@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Contracts\IpgGateway;
+use App\Contracts\StripeGateway;
 use App\Models\Order;
 use RuntimeException;
 use Stripe\Exception\SignatureVerificationException;
@@ -10,10 +10,7 @@ use Stripe\StripeClient;
 use Stripe\Webhook;
 use UnexpectedValueException;
 
-/**
- * Hosted checkout IPG adapter. Provider SDK usage is confined to this class.
- */
-class HostedCheckoutIpgGateway implements IpgGateway
+class StripeCheckoutGateway implements StripeGateway
 {
     public function createCheckoutSession(Order $order, int $amountCents, array $urls): array
     {
@@ -28,7 +25,7 @@ class HostedCheckoutIpgGateway implements IpgGateway
             'line_items' => [[
                 'quantity' => 1,
                 'price_data' => [
-                    'currency' => config('ipg.currency', 'lkr'),
+                    'currency' => config('stripe.currency', 'lkr'),
                     'unit_amount' => $amountCents,
                     'product_data' => [
                         'name' => 'Order #'.$order->id,
@@ -73,7 +70,7 @@ class HostedCheckoutIpgGateway implements IpgGateway
 
     public function parseWebhook(string $payload, string $signatureHeader): array
     {
-        $secret = config('ipg.webhook_secret');
+        $secret = config('stripe.webhook_secret');
 
         if (! filled($secret)) {
             throw new RuntimeException('Online payment webhooks are not configured.');
@@ -107,7 +104,7 @@ class HostedCheckoutIpgGateway implements IpgGateway
 
     private function client(): StripeClient
     {
-        $secret = config('ipg.secret_key');
+        $secret = config('stripe.secret_key');
 
         if (! filled($secret)) {
             throw new RuntimeException('Online payments are not configured.');
