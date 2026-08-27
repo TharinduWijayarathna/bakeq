@@ -19,7 +19,7 @@ test('admin agent tool declarations match registered handlers', function () {
     $registered = AdminAgentTools::names();
 
     expect($declared)->toEqualCanonicalizing($registered)
-        ->and($registered)->toHaveCount(22);
+        ->and($registered)->toHaveCount(25);
 });
 
 test('admins can open the admin agent page', function () {

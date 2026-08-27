@@ -10,6 +10,7 @@ use App\Livewire\GalleryPage;
 use App\Models\AuditLog;
 use App\Models\GalleryPhoto;
 use App\Models\Order;
+use App\Models\Shift;
 use App\Models\SocialPost;
 use App\Models\User;
 use App\Support\AssistantTools;
@@ -56,15 +57,21 @@ test('managers can create employees and staff can clock shifts', function () {
         ->and($employee->role)->toBe(UserRole::Baker)
         ->and(AuditLog::query()->where('action', 'employee.created')->exists())->toBeTrue();
 
+    $shift = Shift::factory()->forUser($employee)->scheduled()->create([
+        'starts_at' => now()->subMinutes(5),
+        'ends_at' => now()->addHours(6),
+    ]);
+
     Livewire::actingAs($employee)
         ->test(ShiftIndex::class)
-        ->call('clockIn')
+        ->call('clockIn', $shift->id)
         ->assertHasNoErrors()
         ->call('clockOut')
         ->assertHasNoErrors();
 
     expect($employee->shiftEntries()->count())->toBe(1)
-        ->and($employee->shiftEntries()->first()->clocked_out_at)->not->toBeNull();
+        ->and($employee->shiftEntries()->first()->clocked_out_at)->not->toBeNull()
+        ->and($employee->shiftEntries()->first()->shift_id)->toBe($shift->id);
 });
 
 test('customer crm shows lifetime spend and saves loyalty notes', function () {

@@ -10,6 +10,7 @@ use App\Actions\GenerateInvoice;
 use App\Enums\IngredientUnit;
 use App\Enums\OrderStatus;
 use App\Enums\ProductionStatus;
+use App\Enums\ShiftStatus;
 use App\Enums\UserRole;
 use App\Enums\WasteReason;
 use App\Exceptions\InsufficientStockException;
@@ -17,8 +18,10 @@ use App\Models\Cake;
 use App\Models\Category;
 use App\Models\Ingredient;
 use App\Models\Order;
+use App\Models\Shift;
 use App\Models\User;
 use App\Models\WasteEntry;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -53,6 +56,9 @@ class AdminAgentTools
         'create_manual_order' => 'orders',
         'create_pos_order' => 'pos',
         'list_employees' => 'employees',
+        'list_todays_shifts' => 'shifts',
+        'list_who_is_on' => 'shifts',
+        'create_shift' => 'shifts',
     ];
 
     /**
@@ -255,6 +261,27 @@ class AdminAgentTools
                 'type' => 'OBJECT',
                 'properties' => (object) [],
             ]),
+            self::fn('list_todays_shifts', 'List scheduled bakery shifts for a date (default today).', [
+                'type' => 'OBJECT',
+                'properties' => [
+                    'date' => ['type' => 'STRING', 'description' => 'YYYY-MM-DD, defaults to today'],
+                ],
+            ]),
+            self::fn('list_who_is_on', 'List staff currently clocked in / in-progress shifts.', [
+                'type' => 'OBJECT',
+                'properties' => (object) [],
+            ]),
+            self::fn('create_shift', 'Schedule a shift for a staff member. Managers and admins only.', [
+                'type' => 'OBJECT',
+                'properties' => [
+                    'staff_id' => ['type' => 'INTEGER'],
+                    'date' => ['type' => 'STRING', 'description' => 'YYYY-MM-DD'],
+                    'starts_at_time' => ['type' => 'STRING', 'description' => 'HH:MM 24h'],
+                    'ends_at_time' => ['type' => 'STRING', 'description' => 'HH:MM 24h'],
+                    'notes' => ['type' => 'STRING'],
+                ],
+                'required' => ['staff_id', 'date', 'starts_at_time', 'ends_at_time'],
+            ]),
         ];
     }
 
@@ -298,6 +325,9 @@ class AdminAgentTools
                 'create_manual_order' => self::createManualOrder($arguments, $actor),
                 'create_pos_order' => self::createPosOrder($arguments, $actor),
                 'list_employees' => self::listEmployees(),
+                'list_todays_shifts' => self::listTodaysShifts($arguments, $actor),
+                'list_who_is_on' => self::listWhoIsOn($actor),
+                'create_shift' => self::createShift($arguments, $actor),
                 default => ['ok' => false, 'summary' => "Unknown tool: {$name}"],
             };
         } catch (ValidationException $exception) {
@@ -1155,6 +1185,156 @@ class AdminAgentTools
             'ok' => true,
             'summary' => count($employees).' staff member(s).',
             'data' => $employees,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     * @return array{ok: bool, summary: string, data: list<array<string, mixed>>}
+     */
+    private static function listTodaysShifts(array $arguments, User $actor): array
+    {
+        $day = filled($arguments['date'] ?? null)
+            ? Carbon::parse((string) $arguments['date'])->startOfDay()
+            : now()->startOfDay();
+        $dayEnd = $day->copy()->endOfDay();
+
+        Shift::query()
+            ->whereBetween('starts_at', [$day, $dayEnd])
+            ->where('status', ShiftStatus::Scheduled)
+            ->where('ends_at', '<', now())
+            ->whereDoesntHave('entries')
+            ->update(['status' => ShiftStatus::Missed]);
+
+        $query = Shift::query()
+            ->with('user')
+            ->whereBetween('starts_at', [$day, $dayEnd])
+            ->orderBy('starts_at');
+
+        if (! $actor->isAdmin()) {
+            $query->where('user_id', $actor->id);
+        }
+
+        $shifts = $query->get()->map(fn (Shift $shift): array => self::shiftBrief($shift))->all();
+
+        return [
+            'ok' => true,
+            'summary' => count($shifts) === 0
+                ? 'No shifts on '.$day->toDateString().'.'
+                : count($shifts).' shift(s) on '.$day->toDateString().'.',
+            'data' => $shifts,
+        ];
+    }
+
+    /**
+     * @return array{ok: bool, summary: string, data: list<array<string, mixed>>}
+     */
+    private static function listWhoIsOn(User $actor): array
+    {
+        $query = Shift::query()
+            ->with(['user', 'entries'])
+            ->where('status', ShiftStatus::InProgress)
+            ->orderBy('starts_at');
+
+        if (! $actor->isAdmin()) {
+            $query->where('user_id', $actor->id);
+        }
+
+        $on = $query->get()->map(function (Shift $shift): array {
+            $entry = $shift->openEntry();
+
+            return [
+                ...self::shiftBrief($shift),
+                'clocked_in_at' => $entry?->clocked_in_at?->toDateTimeString(),
+                'worked' => $entry?->durationLabel(),
+            ];
+        })->all();
+
+        return [
+            'ok' => true,
+            'summary' => count($on) === 0 ? 'Nobody is clocked in right now.' : count($on).' staff on shift.',
+            'data' => $on,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     * @return array{ok: bool, summary: string, data?: array<string, mixed>}
+     */
+    private static function createShift(array $arguments, User $actor): array
+    {
+        if (! $actor->isAdmin()) {
+            return ['ok' => false, 'summary' => 'Only managers and admins can schedule shifts.'];
+        }
+
+        $staffId = (int) ($arguments['staff_id'] ?? 0);
+        $date = (string) ($arguments['date'] ?? '');
+        $startTime = (string) ($arguments['starts_at_time'] ?? '');
+        $endTime = (string) ($arguments['ends_at_time'] ?? '');
+
+        $staff = User::query()
+            ->whereKey($staffId)
+            ->whereIn('role', collect(UserRole::staffCases())->map->value)
+            ->first();
+
+        if ($staff === null || $date === '' || $startTime === '' || $endTime === '') {
+            return ['ok' => false, 'summary' => 'staff_id, date, starts_at_time, and ends_at_time are required.'];
+        }
+
+        $startsAt = Carbon::parse($date.' '.$startTime);
+        $endsAt = Carbon::parse($date.' '.$endTime);
+
+        if ($endsAt->lessThanOrEqualTo($startsAt)) {
+            return ['ok' => false, 'summary' => 'ends_at_time must be after starts_at_time.'];
+        }
+
+        $overlaps = Shift::query()
+            ->where('user_id', $staff->id)
+            ->whereNotIn('status', [ShiftStatus::Cancelled->value, ShiftStatus::Missed->value])
+            ->where('starts_at', '<', $endsAt)
+            ->where('ends_at', '>', $startsAt)
+            ->exists();
+
+        if ($overlaps) {
+            return ['ok' => false, 'summary' => $staff->name.' already has an overlapping shift.'];
+        }
+
+        $shift = Shift::query()->create([
+            'user_id' => $staff->id,
+            'starts_at' => $startsAt,
+            'ends_at' => $endsAt,
+            'status' => ShiftStatus::Scheduled,
+            'notes' => filled($arguments['notes'] ?? null) ? (string) $arguments['notes'] : null,
+        ]);
+
+        AuditLogger::record('shift.created', $shift, null, [
+            'user_id' => $shift->user_id,
+            'via' => 'admin_agent',
+        ], $actor);
+
+        return [
+            'ok' => true,
+            'summary' => 'Scheduled '.$staff->name.' for '.$shift->windowLabel().' on '.$startsAt->toDateString().'.',
+            'data' => self::shiftBrief($shift->load('user')),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function shiftBrief(Shift $shift): array
+    {
+        return [
+            'id' => $shift->id,
+            'staff' => $shift->user?->name,
+            'staff_id' => $shift->user_id,
+            'role' => $shift->user?->role->label(),
+            'starts_at' => $shift->starts_at->toDateTimeString(),
+            'ends_at' => $shift->ends_at->toDateTimeString(),
+            'window' => $shift->windowLabel(),
+            'status' => $shift->status->value,
+            'status_label' => $shift->status->label(),
+            'notes' => $shift->notes,
         ];
     }
 

@@ -104,6 +104,11 @@ class User extends Authenticatable
         return $this->hasMany(ShiftEntry::class);
     }
 
+    public function shifts(): HasMany
+    {
+        return $this->hasMany(Shift::class);
+    }
+
     public function openShift(): ?ShiftEntry
     {
         return $this->shiftEntries()->whereNull('clocked_out_at')->latest('clocked_in_at')->first();
