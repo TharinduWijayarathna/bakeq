@@ -32,6 +32,7 @@ class StaffPermissions
         'shifts' => ['admin', 'manager', 'baker', 'decorator', 'cashier'],
         'audit' => ['admin', 'manager'],
         'gallery' => ['admin', 'manager', 'decorator'],
+        'reports' => ['admin', 'manager'],
     ];
 
     public static function allows(?User $user, string $ability): bool
@@ -74,6 +75,7 @@ class StaffPermissions
             $routeName === 'admin.shifts' => 'shifts',
             $routeName === 'admin.audit' => 'audit',
             str_starts_with($routeName, 'admin.gallery') => 'gallery',
+            str_starts_with($routeName, 'admin.reports') => 'reports',
             default => null,
         };
     }

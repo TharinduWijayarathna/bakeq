@@ -130,5 +130,7 @@ test('assistant looks up order status and recommends cakes', function () {
 test('staff permissions matrix includes all expected abilities', function () {
     expect(StaffPermissions::allows(User::factory()->admin()->create(), 'audit'))->toBeTrue()
         ->and(StaffPermissions::allows(User::factory()->cashier()->create(), 'audit'))->toBeFalse()
-        ->and(StaffPermissions::allows(customer(), 'dashboard'))->toBeFalse();
+        ->and(StaffPermissions::allows(customer(), 'dashboard'))->toBeFalse()
+        ->and(StaffPermissions::allows(User::factory()->manager()->create(), 'reports'))->toBeTrue()
+        ->and(StaffPermissions::routeAbility('admin.reports.index'))->toBe('reports');
 });

@@ -23,6 +23,9 @@
                     @if (auth()->user()->canAccess('dashboard'))
                         <x-admin.nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" icon="layout">Dashboard</x-admin.nav-link>
                     @endif
+                    @if (auth()->user()->canAccess('reports'))
+                        <x-admin.nav-link :href="route('admin.reports.index')" :active="request()->routeIs('admin.reports.*')" icon="chart">Reports</x-admin.nav-link>
+                    @endif
                     @if (auth()->user()->canAccess('categories'))
                         <x-admin.nav-link :href="route('admin.categories')" :active="request()->routeIs('admin.categories')" icon="tag">Categories</x-admin.nav-link>
                     @endif

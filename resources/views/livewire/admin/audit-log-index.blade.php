@@ -28,8 +28,8 @@
                         <td class="px-4 py-3 whitespace-nowrap">{{ $log->created_at?->format('M j, g:i A') }}</td>
                         <td class="px-4 py-3">{{ $log->user?->name ?? 'System' }}</td>
                         <td class="px-4 py-3 font-semibold">{{ $log->action }}</td>
-                        <td class="px-4 py-3 text-xs text-muted-foreground">
-                            <pre class="whitespace-pre-wrap font-sans">{{ json_encode(['old' => $log->old_values, 'new' => $log->new_values], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
+                        <td class="px-4 py-3">
+                            <x-admin.audit-diff :old="$log->old_values" :new="$log->new_values" />
                         </td>
                     </tr>
                 @empty

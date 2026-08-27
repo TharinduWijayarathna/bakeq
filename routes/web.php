@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\InvoiceDownloadController;
+use App\Http\Controllers\Admin\ReportDownloadController;
 use App\Http\Controllers\CheckoutPaymentController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Livewire\Admin\AdminAgentChat;
@@ -22,6 +23,8 @@ use App\Livewire\Admin\PosTerminal;
 use App\Livewire\Admin\ProductionBoard;
 use App\Livewire\Admin\RecipeForm;
 use App\Livewire\Admin\RecipeIndex;
+use App\Livewire\Admin\ReportShow;
+use App\Livewire\Admin\ReportsIndex;
 use App\Livewire\Admin\ShiftIndex;
 use App\Livewire\Admin\TestimonialIndex as AdminTestimonialIndex;
 use App\Livewire\Admin\WasteIndex;
@@ -77,6 +80,11 @@ Route::middleware('auth')->group(function (): void {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function (): void {
     Route::middleware('staff.can:dashboard')->group(function (): void {
         Route::livewire('/', Dashboard::class)->name('dashboard');
+    });
+    Route::middleware('staff.can:reports')->group(function (): void {
+        Route::livewire('/reports', ReportsIndex::class)->name('reports.index');
+        Route::get('/reports/{report}/pdf', ReportDownloadController::class)->name('reports.download');
+        Route::livewire('/reports/{report}', ReportShow::class)->name('reports.show');
     });
     Route::middleware('staff.can:categories')->group(function (): void {
         Route::livewire('/categories', AdminCategoryIndex::class)->name('categories');
