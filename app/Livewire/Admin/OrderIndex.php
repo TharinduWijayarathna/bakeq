@@ -4,12 +4,15 @@ namespace App\Livewire\Admin;
 
 use App\Actions\CreateManualOrder;
 use App\Actions\ExtractOrderFromMessage;
+use App\Actions\UpdateOrderPaymentStatus;
+use App\Actions\UpdateOrderStatus;
 use App\Enums\FulfillmentMethod;
 use App\Enums\OrderOrigin;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\UserRole;
+use App\Exceptions\InsufficientStockException;
 use App\Models\Cake;
 use App\Models\Order;
 use App\Models\User;
@@ -154,6 +157,32 @@ class OrderIndex extends Component
 
             $this->assistant_user_id = $customer?->id;
         }
+    }
+
+    public function updateStatus(int $orderId, string $status, UpdateOrderStatus $updateStatus): void
+    {
+        $order = Order::query()->findOrFail($orderId);
+        $this->authorize('update', $order);
+
+        try {
+            $updateStatus->handle($order, OrderStatus::from($status));
+        } catch (InsufficientStockException $exception) {
+            $this->addError('status_'.$orderId, $exception->getMessage());
+
+            return;
+        }
+
+        $this->resetErrorBag('status_'.$orderId);
+        session()->flash('status', 'Order #'.$orderId.' status updated.');
+    }
+
+    public function updatePaymentStatus(int $orderId, string $status, UpdateOrderPaymentStatus $updatePaymentStatus): void
+    {
+        $order = Order::query()->findOrFail($orderId);
+        $this->authorize('update', $order);
+
+        $updatePaymentStatus->handle($order, PaymentStatus::from($status));
+        session()->flash('status', 'Order #'.$orderId.' payment updated.');
     }
 
     public function sendToPos(): void

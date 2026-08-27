@@ -7,6 +7,7 @@ use App\Actions\CreateManualCustomer;
 use App\Actions\CreateManualOrder;
 use App\Actions\CreatePosOrder;
 use App\Actions\GenerateInvoice;
+use App\Actions\UpdateOrderStatus;
 use App\Enums\IngredientUnit;
 use App\Enums\OrderStatus;
 use App\Enums\ProductionStatus;
@@ -486,33 +487,15 @@ class AdminAgentTools
         }
 
         try {
-            app(AdjustInventoryForOrder::class)->syncForStatusChange($order, $from, $status);
+            $updated = app(UpdateOrderStatus::class)->handle($order, $status, $actor);
         } catch (InsufficientStockException $exception) {
             return ['ok' => false, 'summary' => $exception->getMessage()];
         }
 
-        $payload = ['status' => $status];
-
-        if ($status === OrderStatus::Delivered) {
-            $payload['production_status'] = ProductionStatus::Delivered;
-        } elseif ($status === OrderStatus::Baking) {
-            $payload['production_status'] = ProductionStatus::Baking;
-        }
-
-        $order->update($payload);
-        app(GenerateInvoice::class)->handle($order->fresh(['user', 'items']));
-
-        AuditLogger::record('order.status_changed', $order, [
-            'status' => $from->value,
-        ], [
-            'status' => $status->value,
-            'via' => 'admin_agent',
-        ], $actor);
-
         return [
             'ok' => true,
-            'summary' => 'Order #'.$order->id.' status updated from '.$from->label().' to '.$status->label().'.',
-            'data' => self::orderBrief($order->fresh(['user', 'items'])),
+            'summary' => 'Order #'.$updated->id.' status updated from '.$from->label().' to '.$status->label().'.',
+            'data' => self::orderBrief($updated),
         ];
     }
 

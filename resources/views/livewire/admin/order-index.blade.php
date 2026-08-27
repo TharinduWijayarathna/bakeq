@@ -214,9 +214,30 @@
                             <td class="px-4 py-3"><a href="{{ route('admin.orders.show', $order) }}" class="font-semibold text-primary" wire:navigate>#{{ $order->id }}</a></td>
                             <td class="px-4 py-3">{{ $order->user->name }}</td>
                             <td class="px-4 py-3">{{ $order->delivery_date->toFormattedDateString() }}</td>
-                            <td class="px-4 py-3">{{ $order->status->label() }}</td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex rounded-full bg-muted px-2.5 py-1 text-xs font-bold">{{ $order->payment_status->label() }}</span>
+                                <select
+                                    wire:key="status-{{ $order->id }}-{{ $order->status->value }}"
+                                    wire:change="updateStatus({{ $order->id }}, $event.target.value)"
+                                    class="rounded-full border border-input bg-background px-3 py-1.5 text-xs font-bold uppercase"
+                                >
+                                    @foreach ($statuses as $item)
+                                        <option value="{{ $item->value }}" @selected($order->status === $item)>{{ $item->label() }}</option>
+                                    @endforeach
+                                </select>
+                                @error('status_'.$order->id)
+                                    <p class="mt-1 max-w-48 text-xs text-destructive">{{ $message }}</p>
+                                @enderror
+                            </td>
+                            <td class="px-4 py-3">
+                                <select
+                                    wire:key="pay-{{ $order->id }}-{{ $order->payment_status->value }}"
+                                    wire:change="updatePaymentStatus({{ $order->id }}, $event.target.value)"
+                                    class="rounded-full border border-input bg-background px-3 py-1.5 text-xs font-bold"
+                                >
+                                    @foreach ($paymentStatuses as $item)
+                                        <option value="{{ $item->value }}" @selected($order->payment_status === $item)>{{ $item->label() }}</option>
+                                    @endforeach
+                                </select>
                             </td>
                             <td class="px-4 py-3">
                                 @if ($order->origin->isAiDesigned())

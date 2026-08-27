@@ -10,8 +10,6 @@
                 <a href="{{ route('admin.customers.show', $order->user) }}" class="font-semibold text-primary" wire:navigate>{{ $order->user->name }}</a>
             </p>
             <p class="text-sm text-muted-foreground">{{ $order->user->email }}</p>
-            <p class="mt-3 text-sm">{{ $order->delivery_address }}</p>
-            <p class="text-sm text-muted-foreground">{{ $order->fulfillment_method->label() }} · {{ $order->delivery_date->toFormattedDateString() }}</p>
             <p class="mt-2 text-xs text-muted-foreground">Source: {{ $order->order_source->label() }}</p>
             @if ($order->origin->isAiDesigned())
                 <span class="mt-3 inline-flex rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">AI Designed</span>
@@ -21,9 +19,37 @@
                     <a href="{{ route('admin.invoices.download', $order->invoice) }}" class="font-semibold text-primary">Download invoice {{ $order->invoice->number }}</a>
                 </p>
             @endif
-            @if ($order->notes)
-                <p class="mt-3 text-sm">Notes: {{ $order->notes }}</p>
-            @endif
+
+            <form wire:submit="saveDetails" class="mt-5 grid gap-3 border-t border-border pt-5">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-muted-foreground">Edit details</h3>
+                <div>
+                    <label class="mb-1 block text-xs font-bold uppercase">Fulfillment</label>
+                    <select wire:model="fulfillment_method" class="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm">
+                        @foreach ($fulfillmentMethods as $method)
+                            <option value="{{ $method->value }}">{{ $method->label() }}</option>
+                        @endforeach
+                    </select>
+                    @error('fulfillment_method') <p class="mt-1 text-sm text-destructive">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-bold uppercase">Date</label>
+                    <input type="date" wire:model="delivery_date" class="w-full rounded-2xl border border-input px-4 py-3 text-sm">
+                    @error('delivery_date') <p class="mt-1 text-sm text-destructive">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-bold uppercase">Address / pickup note</label>
+                    <input type="text" wire:model="delivery_address" class="w-full rounded-2xl border border-input px-4 py-3 text-sm">
+                    @error('delivery_address') <p class="mt-1 text-sm text-destructive">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-bold uppercase">Notes</label>
+                    <textarea wire:model="notes" rows="3" class="w-full rounded-2xl border border-input px-4 py-3 text-sm"></textarea>
+                    @error('notes') <p class="mt-1 text-sm text-destructive">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <button type="submit" class="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground">Save details</button>
+                </div>
+            </form>
         </div>
         <div class="rounded-4xl bg-card p-6 shadow-soft">
             <h2 class="text-xl">Status</h2>
@@ -50,6 +76,17 @@
 
     <div class="mt-4 rounded-4xl bg-card p-6 shadow-soft">
         <h2 class="text-xl">Payment</h2>
+        <div class="mt-3 flex flex-wrap gap-2">
+            @foreach ($paymentStatuses as $paymentStatus)
+                <button
+                    type="button"
+                    wire:click="updatePaymentStatus('{{ $paymentStatus->value }}')"
+                    class="rounded-full px-4 py-2 text-xs font-bold uppercase {{ $order->payment_status === $paymentStatus ? 'bg-primary text-primary-foreground' : 'bg-muted' }}"
+                >
+                    {{ $paymentStatus->label() }}
+                </button>
+            @endforeach
+        </div>
         <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-2">
             <div>
                 <dt class="text-muted-foreground">Method</dt>

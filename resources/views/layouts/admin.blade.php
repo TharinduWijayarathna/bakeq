@@ -11,7 +11,6 @@
     <body class="admin-app min-h-screen bg-background text-foreground antialiased">
         <div class="flex min-h-screen">
             <aside class="sticky top-0 hidden h-svh w-64 shrink-0 border-r border-border bg-card lg:flex lg:flex-col">
-                <div class="h-1.5 shrink-0 bg-gradient-sweet" aria-hidden="true"></div>
                 <a href="{{ route('admin.dashboard') }}" class="flex shrink-0 items-center gap-3 px-5 py-5">
                     <img src="{{ asset('images/logo-mark.png') }}" alt="" class="size-10 object-contain">
                     <div>
