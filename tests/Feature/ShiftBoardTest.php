@@ -96,15 +96,14 @@ test('overlapping shifts are rejected', function () {
 
 test('past scheduled shifts without clock-in become missed', function () {
     $baker = User::factory()->baker()->create();
-    $day = now()->toDateString();
     $shift = Shift::factory()->forUser($baker)->scheduled()->create([
-        'starts_at' => $day.' 06:00:00',
-        'ends_at' => $day.' 08:00:00',
+        'starts_at' => now()->subHours(5),
+        'ends_at' => now()->subHour(),
     ]);
 
     Livewire::actingAs($baker)
         ->test(ShiftIndex::class)
-        ->set('date', $day)
+        ->set('date', $shift->starts_at->toDateString())
         ->assertSee('Missed');
 
     expect($shift->fresh()->status)->toBe(ShiftStatus::Missed);

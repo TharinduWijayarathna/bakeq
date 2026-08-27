@@ -220,18 +220,24 @@ class ShiftIndex extends Component
         $boardShifts = $boardQuery->get();
 
         $myActive = $user->openShift()?->load('shift');
-        $myNext = Shift::query()
-            ->where('user_id', $user->id)
-            ->whereIn('status', [ShiftStatus::Scheduled->value, ShiftStatus::Missed->value])
-            ->where('ends_at', '>=', now())
-            ->orderBy('starts_at')
-            ->first();
-
         $myCurrentScheduled = Shift::query()
             ->where('user_id', $user->id)
             ->where('status', ShiftStatus::InProgress)
             ->orderByDesc('starts_at')
             ->first();
+
+        $myNext = Shift::query()
+            ->where('user_id', $user->id)
+            ->whereIn('status', [ShiftStatus::Scheduled->value, ShiftStatus::Missed->value])
+            ->whereDate('starts_at', $day->toDateString())
+            ->orderBy('starts_at')
+            ->first()
+            ?? Shift::query()
+                ->where('user_id', $user->id)
+                ->where('status', ShiftStatus::Scheduled)
+                ->where('starts_at', '>=', now())
+                ->orderBy('starts_at')
+                ->first();
 
         return view('livewire.admin.shift-index', [
             'canManage' => $canManage,
