@@ -37,7 +37,7 @@ class CakeSeeder extends Seeder
                 'slug' => 'cupcake-party-box',
                 'category' => 'cupcakes',
                 'name' => 'Cupcake Party Box',
-                'description' => 'A mixed box of twelve cupcakes — perfect for sharing at the table.',
+                'description' => 'A mixed box of twelve cupcakes, perfect for sharing at the table.',
                 'note' => '12 pieces • mixed flavours',
                 'price' => 220000,
                 'serves' => '12',

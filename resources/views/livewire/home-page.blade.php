@@ -18,7 +18,7 @@
                             sweet cakes<br>made fresh
                         </h1>
                         <p class="mt-6 max-w-xl text-base leading-relaxed text-[color:var(--hero-deep)]/80 sm:text-lg">
-                            Birthday cakes, wedding tiers, cupcakes and dessert tables — handcrafted in small batches, decorated by hand and delivered on the day you celebrate.
+                            Birthday cakes, wedding tiers, cupcakes and dessert tables, handcrafted in small batches, decorated by hand and delivered on the day you celebrate.
                         </p>
                         <div class="mt-10 flex flex-wrap items-center gap-3">
                             <a href="{{ route('cakes.index') }}" class="inline-flex items-center gap-2 rounded-full bg-[color:var(--hero-deep)] px-8 py-4 text-sm font-bold text-primary-foreground shadow-sweet transition hover:-translate-y-0.5" wire:navigate>
@@ -85,7 +85,7 @@
                             <span class="grid size-12 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground"><x-icon name="sparkle" class="size-5" /></span>
                             <div>
                                 <h3 class="text-xl">Customise it</h3>
-                                <p class="text-sm text-muted-foreground">Use the designer cards — no typing prompts — then add to cart.</p>
+                                <p class="text-sm text-muted-foreground">Use the designer cards (no typing prompts), then add to cart.</p>
                             </div>
                         </div>
                         <div class="flex gap-4 rounded-3xl bg-card p-5 shadow-soft">
@@ -120,13 +120,13 @@
                 <p class="font-script text-3xl text-primary sm:text-4xl">About us</p>
                 <h2 class="mt-2 text-4xl sm:text-5xl lg:text-6xl">Baked with love in every layer</h2>
                 <p class="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                    {{ $brandName }} is a home bakery built on family recipes, fresh ingredients and a love for celebrations. From custom birthday cakes to elegant wedding tiers, every cake is made to order and decorated by hand — so the cake on your table tastes as special as the moment it was made for.
+                    {{ $brandName }} is a home bakery built on family recipes, fresh ingredients and a love for celebrations. From custom birthday cakes to elegant wedding tiers, every cake is made to order and decorated by hand, so the cake on your table tastes as special as the moment it was made for.
                 </p>
             </div>
             <div class="mx-auto mt-12 grid max-w-5xl gap-5 sm:grid-cols-3" x-reveal.stagger>
                 <div class="rounded-3xl bg-secondary/70 px-6 py-8 text-center">
                     <h3 class="text-xl">Home bakery</h3>
-                    <p class="mt-2 text-sm leading-relaxed text-muted-foreground">Small batches, baked the morning of your celebration — never sitting on a shelf.</p>
+                    <p class="mt-2 text-sm leading-relaxed text-muted-foreground">Small batches, baked the morning of your celebration, never sitting on a shelf.</p>
                 </div>
                 <div class="rounded-3xl bg-secondary/70 px-6 py-8 text-center">
                     <h3 class="text-xl">Made to order</h3>

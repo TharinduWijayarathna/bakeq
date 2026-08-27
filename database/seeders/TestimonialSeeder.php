@@ -11,7 +11,7 @@ class TestimonialSeeder extends Seeder
     {
         $testimonials = [
             [
-                'quote' => 'The cake was the highlight of our party — soft, fresh and exactly the design I sent.',
+                'quote' => 'The cake was the highlight of our party: soft, fresh and exactly the design I sent.',
                 'author' => 'Dilini P.',
                 'occasion' => 'Birthday order',
                 'rating' => 5,

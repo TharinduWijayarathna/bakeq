@@ -6,6 +6,7 @@ use App\Enums\FulfillmentMethod;
 use App\Enums\OrderOrigin;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\ProductionStatus;
 use App\Models\Order;
 use App\Models\User;
@@ -34,6 +35,8 @@ class OrderFactory extends Factory
             'tax_amount' => 0,
             'deposit_paid' => 0,
             'total_due' => 500000,
+            'payment_status' => PaymentStatus::Unpaid,
+            'payment_amount' => 0,
             'delivery_date' => now()->addDays(3)->toDateString(),
             'delivery_address' => fake()->address(),
             'notes' => null,

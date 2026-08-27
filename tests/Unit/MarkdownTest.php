@@ -7,8 +7,8 @@ test('markdown unwraps fenced replies and renders lists', function () {
 ```markdown
 **Done**
 
-- Flour Low — stock: 1
-- Sugar — stock: 2
+- Flour Low - stock: 1
+- Sugar - stock: 2
 ```
 MD);
 

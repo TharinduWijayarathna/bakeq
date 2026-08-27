@@ -2,13 +2,17 @@
 
 namespace App\Actions;
 
+use App\Enums\CheckoutPaymentChoice;
 use App\Enums\FulfillmentMethod;
 use App\Enums\OrderOrigin;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Enums\ProductionStatus;
 use App\Models\CartItem;
 use App\Models\Order;
+use App\Models\ShopSetting;
 use App\Models\User;
 use App\Support\OrderTotals;
 use Illuminate\Support\Collection;
@@ -24,7 +28,8 @@ class PlaceOrder
      *     delivery_date: string,
      *     delivery_address: string,
      *     notes?: string|null,
-     *     fulfillment_method?: string|null
+     *     fulfillment_method?: string|null,
+     *     payment_choice?: string|null
      * }  $details
      */
     public function handle(User $user, array $details): Order
@@ -43,8 +48,32 @@ class PlaceOrder
         $fulfillment = FulfillmentMethod::tryFrom($details['fulfillment_method'] ?? 'delivery')
             ?? FulfillmentMethod::Delivery;
 
+        $shop = ShopSetting::current();
+        $choice = CheckoutPaymentChoice::tryFrom($details['payment_choice'] ?? CheckoutPaymentChoice::PayLater->value)
+            ?? CheckoutPaymentChoice::PayLater;
+
+        if ($choice->isOnline() && ! $shop->acceptsOnlinePayments()) {
+            throw ValidationException::withMessages([
+                'payment_choice' => 'Online payment is not available right now. Please choose pay later.',
+            ]);
+        }
+
         $itemsSubtotal = $items->sum(fn (CartItem $item): int => $item->lineTotal());
-        $totals = OrderTotals::calculate($itemsSubtotal, fulfillment: $fulfillment);
+        $totals = OrderTotals::calculate($itemsSubtotal, fulfillment: $fulfillment, settings: $shop);
+        $gross = $totals['subtotal'] + $totals['addons_total'] + $totals['delivery_fee'] + $totals['tax_amount'];
+        $depositAmount = $totals['deposit_paid'];
+
+        if ($choice === CheckoutPaymentChoice::OnlineDeposit && $depositAmount < 1) {
+            throw ValidationException::withMessages([
+                'payment_choice' => 'Deposit payment is not available for this order.',
+            ]);
+        }
+
+        $chargeAmount = match ($choice) {
+            CheckoutPaymentChoice::OnlineDeposit => $depositAmount,
+            CheckoutPaymentChoice::OnlineFull => $gross,
+            CheckoutPaymentChoice::PayLater => 0,
+        };
 
         $origin = $this->resolveOrigin($items);
         $designNotes = $this->collectDesignNotes($items);
@@ -53,7 +82,7 @@ class PlaceOrder
             $designNotes,
         ])));
 
-        return DB::transaction(function () use ($user, $details, $items, $totals, $fulfillment, $origin, $orderNotes): Order {
+        return DB::transaction(function () use ($user, $details, $items, $totals, $fulfillment, $origin, $orderNotes, $choice, $chargeAmount, $gross): Order {
             $order = Order::query()->create([
                 'user_id' => $user->id,
                 'order_source' => OrderSource::Online,
@@ -65,8 +94,11 @@ class PlaceOrder
                 'addons_total' => $totals['addons_total'],
                 'delivery_fee' => $totals['delivery_fee'],
                 'tax_amount' => $totals['tax_amount'],
-                'deposit_paid' => $totals['deposit_paid'],
-                'total_due' => $totals['total_due'],
+                'deposit_paid' => 0,
+                'total_due' => $gross,
+                'payment_method' => $choice->isOnline() ? PaymentMethod::Online : PaymentMethod::PayLater,
+                'payment_status' => $choice->isOnline() ? PaymentStatus::AwaitingPayment : PaymentStatus::Unpaid,
+                'payment_amount' => $chargeAmount,
                 'delivery_date' => $details['delivery_date'],
                 'delivery_address' => $details['delivery_address'],
                 'notes' => $orderNotes !== '' ? $orderNotes : null,

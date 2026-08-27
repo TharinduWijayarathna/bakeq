@@ -8,7 +8,7 @@
             <p class="font-bold">Low stock alert</p>
             <ul class="mt-2 space-y-1">
                 @foreach ($lowStock as $item)
-                    <li wire:key="low-{{ $item->id }}">{{ $item->name }} — {{ $item->stockLabel() }} (reorder at {{ rtrim(rtrim(number_format((float) $item->reorder_threshold, 3, '.', ''), '0'), '.') }} {{ $item->unit->value }})</li>
+                    <li wire:key="low-{{ $item->id }}">{{ $item->name }} - {{ $item->stockLabel() }} (reorder at {{ rtrim(rtrim(number_format((float) $item->reorder_threshold, 3, '.', ''), '0'), '.') }} {{ $item->unit->value }})</li>
                 @endforeach
             </ul>
         </div>
@@ -19,7 +19,7 @@
             <p class="font-bold">Expiring soon (14 days)</p>
             <ul class="mt-2 space-y-1">
                 @foreach ($expiringSoon as $item)
-                    <li wire:key="exp-{{ $item->id }}">{{ $item->name }} — {{ $item->expiry_date->toFormattedDateString() }}</li>
+                    <li wire:key="exp-{{ $item->id }}">{{ $item->name }} - {{ $item->expiry_date->toFormattedDateString() }}</li>
                 @endforeach
             </ul>
         </div>
@@ -109,8 +109,8 @@
                         </td>
                         <td class="px-4 py-3">{{ $ingredient->stockLabel() }}</td>
                         <td class="px-4 py-3">{{ $ingredient->formattedUnitCost() }}</td>
-                        <td class="px-4 py-3">{{ $ingredient->supplier ?? '—' }}</td>
-                        <td class="px-4 py-3">{{ $ingredient->expiry_date?->toFormattedDateString() ?? '—' }}</td>
+                        <td class="px-4 py-3">{{ $ingredient->supplier ?? '-' }}</td>
+                        <td class="px-4 py-3">{{ $ingredient->expiry_date?->toFormattedDateString() ?? '-' }}</td>
                         <td class="px-4 py-3 text-right">
                             <button type="button" wire:click="edit({{ $ingredient->id }})" class="text-xs font-bold uppercase text-primary">Edit</button>
                             <button type="button" wire:click="delete({{ $ingredient->id }})" class="ml-3 text-xs font-bold uppercase text-destructive">Delete</button>

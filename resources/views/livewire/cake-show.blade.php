@@ -13,7 +13,7 @@
                 <p class="mt-2 text-sm font-semibold text-muted-foreground">{{ $cake->note }}</p>
             @endif
             <p class="mt-6 text-3xl font-bold text-primary">{{ $cake->formattedPrice() }}</p>
-            <p class="mt-1 text-sm text-muted-foreground">Lead time: {{ $cake->lead_days }} day{{ $cake->lead_days === 1 ? '' : 's' }} · Serves {{ $cake->serves ?: '—' }}</p>
+            <p class="mt-1 text-sm text-muted-foreground">Lead time: {{ $cake->lead_days }} day{{ $cake->lead_days === 1 ? '' : 's' }} · Serves {{ $cake->serves ?: '-' }}</p>
 
             <div class="mt-8 flex flex-wrap gap-3">
                 <button type="button" wire:click="addToCart" wire:loading.attr="disabled" wire:target="addToCart" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-primary-foreground disabled:opacity-70">
@@ -166,7 +166,7 @@
                     @endforeach
                 </ul>
             @else
-                <p class="mt-4 text-sm text-muted-foreground">Serves {{ $cake->serves ?: '—' }}</p>
+                <p class="mt-4 text-sm text-muted-foreground">Serves {{ $cake->serves ?: '-' }}</p>
             @endif
         </section>
 

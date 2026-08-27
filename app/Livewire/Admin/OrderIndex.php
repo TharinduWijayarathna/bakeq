@@ -8,6 +8,7 @@ use App\Enums\FulfillmentMethod;
 use App\Enums\OrderOrigin;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\UserRole;
 use App\Models\Cake;
 use App\Models\Order;
@@ -28,6 +29,9 @@ class OrderIndex extends Component
 
     #[Url]
     public string $status = '';
+
+    #[Url]
+    public string $payment_status = '';
 
     public ?int $user_id = null;
 
@@ -216,12 +220,14 @@ class OrderIndex extends Component
                 ->with('user')
                 ->where('order_source', $source)
                 ->when($this->status !== '', fn ($query) => $query->where('status', $this->status))
+                ->when($this->payment_status !== '', fn ($query) => $query->where('payment_status', $this->payment_status))
                 ->latest()
                 ->get();
 
         return view('livewire.admin.order-index', [
             'orders' => $orders,
             'statuses' => OrderStatus::cases(),
+            'paymentStatuses' => PaymentStatus::cases(),
             'canUseAssistant' => $canUseAssistant,
             'customers' => User::query()
                 ->where('role', UserRole::Customer)

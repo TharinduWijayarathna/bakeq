@@ -1,7 +1,7 @@
 <div>
     <p class="font-script text-3xl text-primary">Designer</p>
     <h1 class="mt-1 text-4xl">Rules and options</h1>
-    <p class="mt-2 max-w-2xl text-sm text-muted-foreground">Control how many tiers customers can pick, which looks are required, and what extras cost. Customers only tap cards — they never type a prompt.</p>
+    <p class="mt-2 max-w-2xl text-sm text-muted-foreground">Control how many tiers customers can pick, which looks are required, and what extras cost. Customers only tap cards; they never type a prompt.</p>
     <x-flash />
 
     <form wire:submit="saveSettings" class="mt-8 grid gap-4 rounded-4xl bg-card p-6 shadow-soft sm:grid-cols-2">

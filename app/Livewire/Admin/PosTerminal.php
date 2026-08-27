@@ -49,7 +49,7 @@ class PosTerminal extends Component
                 $this->addCakeLine();
             }
 
-            session()->flash('status', 'Order Assistant details loaded — review and complete the sale.');
+            session()->flash('status', 'Order Assistant details loaded. Review and complete the sale.');
 
             return;
         }

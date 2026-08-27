@@ -166,10 +166,10 @@
                             @elseif ($worked > 0)
                                 {{ intdiv($worked, 60) }}h {{ $worked % 60 }}m
                             @else
-                                —
+                                -
                             @endif
                         </td>
-                        <td class="px-4 py-3 text-muted-foreground">{{ $shift->notes ?? '—' }}</td>
+                        <td class="px-4 py-3 text-muted-foreground">{{ $shift->notes ?? '-' }}</td>
                         @if ($canManage)
                             <td class="px-4 py-3 text-right">
                                 @if ($shift->canCancel())

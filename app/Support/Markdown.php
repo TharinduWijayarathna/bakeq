@@ -97,7 +97,7 @@ class Markdown
             return '_No rows._';
         }
 
-        $escape = fn (mixed $value): string => str_replace('|', '\\|', trim((string) ($value ?? '—')));
+        $escape = fn (mixed $value): string => str_replace('|', '\\|', trim((string) ($value ?? '-')));
 
         $header = '| '.implode(' | ', array_map($escape, $columns)).' |';
         $divider = '| '.implode(' | ', array_map(fn (): string => '---', $columns)).' |';

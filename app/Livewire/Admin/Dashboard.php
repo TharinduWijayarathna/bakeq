@@ -27,9 +27,13 @@ class Dashboard extends Component
 {
     public string $monthly_budget_rupees = '0';
 
+    public bool $online_payments_enabled = true;
+
     public function mount(): void
     {
-        $this->monthly_budget_rupees = (string) Money::centsToRupees(ShopSetting::current()->monthly_revenue_budget);
+        $settings = ShopSetting::current();
+        $this->monthly_budget_rupees = (string) Money::centsToRupees($settings->monthly_revenue_budget);
+        $this->online_payments_enabled = $settings->online_payments_enabled;
     }
 
     public function saveBudget(): void
@@ -44,6 +48,21 @@ class Dashboard extends Component
         ]);
 
         session()->flash('status', 'Monthly revenue budget updated.');
+    }
+
+    public function saveOnlinePayments(): void
+    {
+        $validated = $this->validate([
+            'online_payments_enabled' => ['required', 'boolean'],
+        ]);
+
+        ShopSetting::current()->update([
+            'online_payments_enabled' => $validated['online_payments_enabled'],
+        ]);
+
+        session()->flash('status', $validated['online_payments_enabled']
+            ? 'Online payments enabled for website checkout.'
+            : 'Online payments disabled. Customers can still pay later.');
     }
 
     public function render(): View

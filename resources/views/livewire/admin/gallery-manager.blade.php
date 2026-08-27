@@ -30,7 +30,7 @@
 
         <section class="rounded-4xl bg-card p-6 shadow-soft">
             <h2 class="text-xl font-bold">Social post (manual grid / embed)</h2>
-            <p class="mt-1 text-xs text-muted-foreground">Paste a public post URL. Optional embed HTML from the platform’s oEmbed/share tools — no scraping.</p>
+            <p class="mt-1 text-xs text-muted-foreground">Paste a public post URL. Optional embed HTML from the platform’s oEmbed/share tools. No scraping.</p>
             <form wire:submit="savePost" class="mt-4 space-y-3">
                 <select wire:model="post_platform" class="w-full rounded-2xl border border-input px-4 py-3 text-sm">
                     <option value="instagram">Instagram</option>

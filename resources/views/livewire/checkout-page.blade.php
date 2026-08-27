@@ -20,10 +20,10 @@
             <div class="flex justify-between gap-4"><span>Add-ons</span><span class="font-semibold">{{ $formatted['addons_total'] }}</span></div>
             <div class="flex justify-between gap-4"><span>{{ $fulfillment_method === 'pickup' ? 'Pickup fee' : 'Delivery fee' }}</span><span class="font-semibold">{{ $formatted['delivery_fee'] }}</span></div>
             <div class="flex justify-between gap-4"><span>Tax</span><span class="font-semibold">{{ $formatted['tax_amount'] }}</span></div>
-            <div class="flex justify-between gap-4"><span>Deposit paid</span><span class="font-semibold">− {{ $formatted['deposit_paid'] }}</span></div>
+            <div class="flex justify-between gap-4"><span>Order total</span><span class="font-semibold">{{ $formatted['gross'] }}</span></div>
             <div class="flex justify-between gap-4 border-t border-border/60 pt-2 text-base">
-                <span class="font-bold">Total due</span>
-                <span class="font-bold text-primary">{{ $formatted['total_due'] }}</span>
+                <span class="font-bold">Amount to pay now</span>
+                <span class="font-bold text-primary">{{ $formatted['pay_now'] }}</span>
             </div>
         </div>
 
@@ -57,10 +57,23 @@
                 <textarea wire:model="notes" rows="3" class="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm" placeholder="Allergies, message on cake, timing…"></textarea>
                 @error('notes') <p class="mt-1 text-sm text-destructive">{{ $message }}</p> @enderror
             </div>
+            <div>
+                <label class="mb-2 block text-sm font-semibold">Payment</label>
+                <div class="flex flex-col gap-2">
+                    @foreach ($paymentChoices as $option)
+                        <label wire:key="check-pay-{{ $option['value'] }}" class="flex cursor-pointer items-center gap-3 rounded-2xl border border-border px-4 py-3 text-sm font-semibold {{ $payment_choice === $option['value'] ? 'border-primary bg-primary/10 text-primary' : '' }}">
+                            <input type="radio" wire:model.live="payment_choice" value="{{ $option['value'] }}" class="size-4 accent-primary">
+                            <span>{{ $option['label'] }}</span>
+                        </label>
+                    @endforeach
+                </div>
+                @error('payment_choice') <p class="mt-1 text-sm text-destructive">{{ $message }}</p> @enderror
+                @error('cart') <p class="mt-1 text-sm text-destructive">{{ $message }}</p> @enderror
+            </div>
             <button type="submit" wire:loading.attr="disabled" class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-3 text-sm font-bold text-primary-foreground disabled:opacity-70">
-                <span wire:loading.remove>Place order</span>
+                <span wire:loading.remove>{{ $submitLabel }}</span>
                 <span wire:loading.flex class="items-center gap-2">
-                    <x-spinner /> Placing order…
+                    <x-spinner /> Working…
                 </span>
             </button>
         </form>

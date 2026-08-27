@@ -20,6 +20,7 @@ class ShopSettingFactory extends Factory
             'pickup_fee' => 0,
             'tax_percent' => 0,
             'deposit_percent' => 0,
+            'online_payments_enabled' => true,
             'labor_overhead_percent' => 15,
             'monthly_revenue_budget' => 50000000,
             'business_name' => 'Rushq cakes by Shashi',

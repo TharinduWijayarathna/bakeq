@@ -8,6 +8,7 @@ use App\Enums\OrderOrigin;
 use App\Enums\OrderSource;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Enums\ProductionStatus;
 use App\Support\Money;
 use Database\Factories\OrderFactory;
@@ -38,6 +39,11 @@ use Illuminate\Support\Carbon;
  * @property int $discount_value
  * @property int $discount_amount
  * @property PaymentMethod|null $payment_method
+ * @property PaymentStatus $payment_status
+ * @property int $payment_amount
+ * @property string|null $ipg_checkout_id
+ * @property string|null $ipg_payment_id
+ * @property Carbon|null $paid_at
  * @property string|null $receipt_number
  * @property Carbon $delivery_date
  * @property string $delivery_address
@@ -65,6 +71,11 @@ use Illuminate\Support\Carbon;
     'discount_value',
     'discount_amount',
     'payment_method',
+    'payment_status',
+    'payment_amount',
+    'ipg_checkout_id',
+    'ipg_payment_id',
+    'paid_at',
     'receipt_number',
     'delivery_date',
     'delivery_address',
@@ -92,6 +103,8 @@ class Order extends Model
         'stock_deducted' => false,
         'discount_value' => 0,
         'discount_amount' => 0,
+        'payment_status' => 'unpaid',
+        'payment_amount' => 0,
     ];
 
     /**
@@ -107,6 +120,7 @@ class Order extends Model
             'fulfillment_method' => FulfillmentMethod::class,
             'discount_type' => DiscountType::class,
             'payment_method' => PaymentMethod::class,
+            'payment_status' => PaymentStatus::class,
             'subtotal' => 'integer',
             'addons_total' => 'integer',
             'delivery_fee' => 'integer',
@@ -116,7 +130,9 @@ class Order extends Model
             'stock_deducted' => 'boolean',
             'discount_value' => 'integer',
             'discount_amount' => 'integer',
+            'payment_amount' => 'integer',
             'delivery_date' => 'date',
+            'paid_at' => 'datetime',
         ];
     }
 
@@ -145,8 +161,23 @@ class Order extends Model
         return Money::format($this->total_due > 0 ? $this->total_due : $this->subtotal);
     }
 
+    public function formattedPaymentAmount(): string
+    {
+        return Money::format($this->payment_amount);
+    }
+
     public function amountDue(): int
     {
         return $this->total_due > 0 ? $this->total_due : $this->subtotal;
+    }
+
+    public function hasOutstandingBalance(): bool
+    {
+        return in_array($this->payment_status, [
+            PaymentStatus::Unpaid,
+            PaymentStatus::PartiallyPaid,
+            PaymentStatus::AwaitingPayment,
+            PaymentStatus::Failed,
+        ], true) && $this->total_due > 0;
     }
 }

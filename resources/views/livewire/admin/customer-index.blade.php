@@ -57,7 +57,7 @@
                             <a href="{{ route('admin.customers.show', $customer) }}" class="text-primary" wire:navigate>{{ $customer->name }}</a>
                         </td>
                         <td class="px-4 py-3">{{ $customer->email }}</td>
-                        <td class="px-4 py-3">{{ $customer->city ?? '—' }}</td>
+                        <td class="px-4 py-3">{{ $customer->city ?? '-' }}</td>
                         <td class="px-4 py-3">{{ $customer->customer_source->label() }}</td>
                         <td class="px-4 py-3">{{ $customer->orders_count }}</td>
                     </tr>

@@ -41,7 +41,7 @@
                         <select wire:model.live="lines.{{ $index }}.cake_id" class="w-full rounded-2xl border border-input bg-background px-4 py-2.5 text-sm">
                             <option value="">Ad-hoc item</option>
                             @foreach ($cakes as $cake)
-                                <option value="{{ $cake->id }}">{{ $cake->name }} — {{ $cake->formattedPrice() }}</option>
+                                <option value="{{ $cake->id }}">{{ $cake->name }} - {{ $cake->formattedPrice() }}</option>
                             @endforeach
                         </select>
                     </div>

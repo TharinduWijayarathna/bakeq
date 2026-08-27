@@ -22,6 +22,14 @@
                 </button>
             @endforeach
         </div>
+        <div class="mt-2 flex flex-wrap gap-2">
+            <button type="button" wire:click="$set('payment_status', '')" class="rounded-full px-4 py-2 text-sm font-semibold {{ $payment_status === '' ? 'bg-secondary text-secondary-foreground' : 'bg-card' }}">All payments</button>
+            @foreach ($paymentStatuses as $item)
+                <button type="button" wire:key="pay-{{ $item->value }}" wire:click="$set('payment_status', '{{ $item->value }}')" class="rounded-full px-4 py-2 text-sm font-semibold {{ $payment_status === $item->value ? 'bg-secondary text-secondary-foreground' : 'bg-card' }}">
+                    {{ $item->label() }}
+                </button>
+            @endforeach
+        </div>
     @endif
 
     @if ($tab === 'manual')
@@ -42,7 +50,7 @@
                 <select wire:model="cake_id" class="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm">
                     <option value="">Choose cake</option>
                     @foreach ($cakes as $cake)
-                        <option value="{{ $cake->id }}">{{ $cake->name }} — {{ $cake->formattedPrice() }}</option>
+                        <option value="{{ $cake->id }}">{{ $cake->name }} - {{ $cake->formattedPrice() }}</option>
                     @endforeach
                 </select>
                 @error('cake_id') <p class="mt-1 text-sm text-destructive">{{ $message }}</p> @enderror
@@ -118,7 +126,7 @@
                     <p class="mt-4 text-sm text-muted-foreground">Results appear here after extraction. You can always edit before sending to POS.</p>
                 @else
                     @if ($ai_failed)
-                        <p class="mt-3 rounded-2xl bg-destructive/10 px-3 py-2 text-sm text-destructive">AI unavailable — fill in manually and continue.</p>
+                        <p class="mt-3 rounded-2xl bg-destructive/10 px-3 py-2 text-sm text-destructive">AI unavailable. Fill in manually and continue.</p>
                     @endif
 
                     <div class="mt-4 grid gap-3 sm:grid-cols-2">
@@ -195,6 +203,7 @@
                         <th class="px-4 py-3">Customer</th>
                         <th class="px-4 py-3">Date</th>
                         <th class="px-4 py-3">Status</th>
+                        <th class="px-4 py-3">Payment</th>
                         <th class="px-4 py-3">Origin</th>
                         <th class="px-4 py-3">Total due</th>
                     </tr>
@@ -207,6 +216,9 @@
                             <td class="px-4 py-3">{{ $order->delivery_date->toFormattedDateString() }}</td>
                             <td class="px-4 py-3">{{ $order->status->label() }}</td>
                             <td class="px-4 py-3">
+                                <span class="inline-flex rounded-full bg-muted px-2.5 py-1 text-xs font-bold">{{ $order->payment_status->label() }}</span>
+                            </td>
+                            <td class="px-4 py-3">
                                 @if ($order->origin->isAiDesigned())
                                     <span class="inline-flex rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">AI Designed</span>
                                 @else
@@ -216,7 +228,7 @@
                             <td class="px-4 py-3">{{ $order->formattedTotalDue() }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="px-4 py-6 text-muted-foreground">No {{ $tab }} orders.</td></tr>
+                        <tr><td colspan="7" class="px-4 py-6 text-muted-foreground">No {{ $tab }} orders.</td></tr>
                     @endforelse
                 </tbody>
             </table>

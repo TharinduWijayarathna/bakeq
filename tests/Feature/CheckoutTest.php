@@ -21,6 +21,7 @@ test('customers can place an order from the cart', function () {
         ->test(CheckoutPage::class)
         ->set('delivery_date', now()->addDays(4)->toDateString())
         ->set('delivery_address', '88 Galle Road, Colombo')
+        ->set('payment_choice', 'pay_later')
         ->call('placeOrder')
         ->assertHasNoErrors()
         ->assertRedirect(route('orders.index'));

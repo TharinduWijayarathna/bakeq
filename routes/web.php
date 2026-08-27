@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\InvoiceDownloadController;
+use App\Http\Controllers\CheckoutPaymentController;
+use App\Http\Controllers\IpgWebhookController;
 use App\Livewire\Admin\AdminAgentChat;
 use App\Livewire\Admin\AuditLogIndex;
 use App\Livewire\Admin\CakeForm;
@@ -58,12 +60,16 @@ Route::post('/logout', function () {
     return redirect()->route('home');
 })->middleware('auth')->name('logout');
 
+Route::post('/webhooks/ipg', IpgWebhookController::class)->name('webhooks.ipg');
+
 Route::middleware('auth')->group(function (): void {
     Route::livewire('/designer', CakeDesigner::class)->name('designer');
     Route::livewire('/assistant', CakeAssistant::class)->name('assistant');
     Route::livewire('/cart', CartPage::class)->name('cart');
     Route::livewire('/wishlist', WishlistPage::class)->name('wishlist');
     Route::livewire('/checkout', CheckoutPage::class)->name('checkout');
+    Route::get('/checkout/payment/{order}/success', [CheckoutPaymentController::class, 'success'])->name('checkout.payment.success');
+    Route::get('/checkout/payment/{order}/cancel', [CheckoutPaymentController::class, 'cancel'])->name('checkout.payment.cancel');
     Route::livewire('/orders', OrderIndex::class)->name('orders.index');
     Route::livewire('/profile', ProfilePage::class)->name('profile');
 });

@@ -4,7 +4,7 @@
             <p class="font-script text-3xl text-primary">Agent</p>
             <h1 class="mt-1 text-4xl">Admin Agent</h1>
             <p class="mt-2 max-w-2xl text-sm text-muted-foreground">
-                Chat to run bakery operations — orders, production, cakes, customers, inventory, waste, POS, and dashboard insights — through secure tools.
+                Chat to run bakery operations (orders, production, cakes, customers, inventory, waste, POS, and dashboard insights) through secure tools.
             </p>
         </div>
         @if ($messages !== [])
@@ -65,7 +65,7 @@
                     <x-icon name="sparkle" class="size-8 text-primary" />
                     <h2 class="mt-3 text-xl font-bold">Ask the bakery agent</h2>
                     <p class="mt-2 max-w-md text-sm text-muted-foreground">
-                        Examples: “Mark order #42 as baking”, “Create category Cupcakes”, “Add 2kg flour to stock”, “POS sale for customer 5 — chocolate cake cash”.
+                        Examples: “Mark order #42 as baking”, “Create category Cupcakes”, “Add 2kg flour to stock”, “POS sale for customer 5, chocolate cake cash”.
                     </p>
                 </div>
             @endforelse

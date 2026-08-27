@@ -126,7 +126,7 @@ class ProcurementSuggestions
                 $lookbackWeeks,
             )
             : sprintf(
-                'Based on ~%.1f expected orders through %s (from a %d-week moving average) and current recipes, reorder %d ingredient%s — about %s total.',
+                'Based on ~%.1f expected orders through %s (from a %d-week moving average) and current recipes, reorder %d ingredient%s, about %s total.',
                 $expectedOrders,
                 $untilLabel,
                 $lookbackWeeks,

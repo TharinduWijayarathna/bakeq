@@ -7,9 +7,18 @@
         <article wire:key="order-{{ $order->id }}" class="mt-6 rounded-4xl bg-card p-6 shadow-soft">
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <h2 class="text-xl">Order #{{ $order->id }}</h2>
-                <span class="rounded-full bg-secondary px-3 py-1 text-xs font-bold uppercase">{{ $order->status->label() }}</span>
+                <div class="flex flex-wrap gap-2">
+                    <span class="rounded-full bg-secondary px-3 py-1 text-xs font-bold uppercase">{{ $order->status->label() }}</span>
+                    <span class="rounded-full bg-muted px-3 py-1 text-xs font-bold uppercase">{{ $order->payment_status->label() }}</span>
+                </div>
             </div>
-            <p class="mt-1 text-sm text-muted-foreground">Delivery {{ $order->delivery_date->toFormattedDateString() }} · {{ $order->formattedSubtotal() }}</p>
+            <p class="mt-1 text-sm text-muted-foreground">
+                Delivery {{ $order->delivery_date->toFormattedDateString() }}
+                · {{ $order->formattedSubtotal() }}
+                @if ($order->payment_method)
+                    · {{ $order->payment_method->label() }}
+                @endif
+            </p>
             <ul class="mt-4 space-y-1 text-sm">
                 @foreach ($order->items as $item)
                     <li wire:key="oi-{{ $item->id }}">{{ $item->name }} × {{ $item->quantity }}</li>

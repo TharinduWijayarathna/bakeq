@@ -203,7 +203,7 @@ class DemandForecast
             : 'Recent favourites: '.collect($topFlavors)->take(3)->pluck('name')->implode(', ').'.';
 
         return sprintf(
-            'We average the last %d full weeks of completed (non-cancelled) orders — a simple moving average — then project that same weekly pace across the next %d weeks (~%s orders/week). %s This method is easy to explain: no seasonality model, just recent history carried forward.',
+            'We average the last %d full weeks of completed (non-cancelled) orders (a simple moving average), then project that same weekly pace across the next %d weeks (~%s orders/week). %s This method is easy to explain: no seasonality model, just recent history carried forward.',
             $lookbackWeeks,
             $horizonWeeks,
             rtrim(rtrim(number_format($average, 1, '.', ''), '0'), '.') ?: (string) $forecastOrders,

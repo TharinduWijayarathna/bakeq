@@ -21,7 +21,7 @@ class DemoCakeKnowledgeAssistant implements CakeKnowledgeAssistant
         'price' => "Catalog cakes show a starting price in Sri Lankan rupees.\n\n- Custom designs add extra for flavour, look and decorations you pick in the designer",
         'wedding' => "Wedding cakes often use fondant or fresh flowers.\n\n- Open Designer and pick **Wedding** as the cake type\n- Then choose tiers and a look\n- Order well ahead",
         'birthday' => "Birthday cakes are our most popular order.\n\n- Buttercream with cherries works well\n- A themed custom cake also works well\n- Add a message when you checkout",
-        'design' => "**The designer is tap-only — no typing.**\n\n- Open Designer\n- Tap the look, flavour, frosting and decorations you want\n- Press Generate",
+        'design' => "**The designer is tap-only, no typing.**\n\n- Open Designer\n- Tap the look, flavour, frosting and decorations you want\n- Press Generate",
         'allerg' => "Tell us about nut, dairy or gluten needs in the order notes.\n\n- Our home kitchen is **not** a dedicated allergen-free space",
         'cupcake' => "Cupcake boxes come in **12 mixed pieces**.\n\n- A good pick for parties when you want several flavours on one table",
         'lead' => "**Custom cakes need a few days** so we can bake and decorate without rushing.\n\n- Catalog cakes still need advance notice for delivery dates",

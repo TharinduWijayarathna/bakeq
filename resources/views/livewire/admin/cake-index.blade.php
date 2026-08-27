@@ -28,7 +28,7 @@
                         <td class="px-4 py-3 font-semibold">{{ $row['cake']->name }}</td>
                         <td class="px-4 py-3">{{ $row['cake']->category->name }}</td>
                         <td class="px-4 py-3">{{ $row['cake']->formattedPrice() }}</td>
-                        <td class="px-4 py-3">{{ $row['formatted_cost'] ?? '—' }}</td>
+                        <td class="px-4 py-3">{{ $row['formatted_cost'] ?? '-' }}</td>
                         <td class="px-4 py-3">
                             @if ($row['costing'])
                                 {{ $row['margin_percent'] }}%

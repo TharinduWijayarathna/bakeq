@@ -289,7 +289,7 @@ class AdminAgent
                         ->map(fn (mixed $value, string|int $key): string => $key.': '.(string) $value)
                         ->implode(', ');
 
-                    return '- **'.$label.'**'.($bits !== '' ? ' — '.$bits : '');
+                    return '- **'.$label.'**'.($bits !== '' ? ' - '.$bits : '');
                 })
                 ->implode("\n");
         }
@@ -340,7 +340,7 @@ Always reply in clean GitHub-flavored Markdown (never wrap the whole answer in a
 - Use `code` for IDs, statuses, and tool names
 - Include clickable links when tool data provides admin_url
 Prices in the app are stored in cents but tools accept rupees for money inputs.
-Never invent successful writes — only report what tools returned.
+Never invent successful writes. Only report what tools returned.
 If a request is unsafe or out of scope (passwords, deleting the database, unrelated topics), refuse briefly and steer back to bakery operations.
 Today is '.now()->toDateString().'.';
     }

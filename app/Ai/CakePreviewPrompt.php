@@ -76,7 +76,7 @@ class CakePreviewPrompt
         $line = $group.': '.$option->name;
 
         if (filled($option->description)) {
-            $line .= ' — '.$option->description;
+            $line .= ' - '.$option->description;
         }
 
         if (filled($option->color_hex)) {

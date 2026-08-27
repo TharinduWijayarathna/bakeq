@@ -10,7 +10,7 @@
                 @if ($mode === 'describe')
                     Write a free-text description. We generate a preview you can add to cart with notes for the baker.
                 @else
-                    Choose cake type, tiers, flavour and finish from the cards — or switch to Describe it for free text.
+                    Choose cake type, tiers, flavour and finish from the cards, or switch to Describe it for free text.
                 @endif
             </p>
             <div class="mt-5 flex flex-wrap gap-2">

@@ -33,6 +33,21 @@
             </div>
             @error('monthly_budget_rupees') <p class="mt-2 text-sm text-destructive">{{ $message }}</p> @enderror
 
+            <form wire:submit="saveOnlinePayments" class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-md bg-muted/50 p-3">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Website checkout</p>
+                    <p class="mt-1 text-sm font-semibold">Online payments</p>
+                    <p class="mt-0.5 text-xs text-muted-foreground">When off, customers can only choose pay later. Payment confirmation uses the return URL unless IPG webhooks are enabled in env.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <label class="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold">
+                        <input type="checkbox" wire:model="online_payments_enabled" class="size-4 accent-primary">
+                        Enabled
+                    </label>
+                    <button type="submit" class="rounded-md bg-secondary px-3 py-1.5 text-xs font-bold uppercase text-secondary-foreground">Save</button>
+                </div>
+            </form>
+
             <div class="mt-5 grid gap-3 sm:grid-cols-2">
                 <div class="rounded-md bg-muted/50 p-3">
                     <p class="text-xs text-muted-foreground">Revenue</p>
@@ -48,7 +63,7 @@
                 <div class="rounded-md bg-muted/50 p-3">
                     <p class="text-xs text-muted-foreground">Budget progress</p>
                     <p class="mt-1 text-lg font-bold tabular-nums">
-                        {{ $monthSummary['budget_progress_percent'] !== null ? $monthSummary['budget_progress_percent'].'%' : '—' }}
+                        {{ $monthSummary['budget_progress_percent'] !== null ? $monthSummary['budget_progress_percent'].'%' : '-' }}
                     </p>
                     <p class="mt-1 text-xs text-muted-foreground">Target {{ $monthSummary['budget_formatted'] }}</p>
                     @if ($monthSummary['budget'] > 0)
@@ -118,7 +133,7 @@
                         <span class="shrink-0 tabular-nums text-muted-foreground">{{ $seller['quantity_sold'] }}</span>
                     </li>
                 @empty
-                    <li class="text-sm text-muted-foreground">—</li>
+                    <li class="text-sm text-muted-foreground">-</li>
                 @endforelse
             </ul>
         </x-admin.panel>

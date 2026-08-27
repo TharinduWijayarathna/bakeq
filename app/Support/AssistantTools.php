@@ -90,7 +90,7 @@ class AssistantTools
             ['needles' => ['lead time', 'how long', 'days ahead', 'how many days'], 'answer' => '**Lead time** is usually a few days for custom cakes so every layer is baked fresh. Catalog cakes list their lead time on the cake page; the designer also shows the studio lead time.'],
             ['needles' => ['store', 'storage', 'refrigerat', 'keep a cake'], 'answer' => '**Storage:** keep cream cakes refrigerated. Plain buttercream cakes can sit in a cool room for a few hours. Best enjoyed within **48 hours**.'],
             ['needles' => ['deliver', 'pickup', 'pick up'], 'answer' => '**Delivery & pickup:** choose either at checkout. Delivery has a small fee from shop settings; pickup is usually free. Share a clear address and preferred time in the notes.'],
-            ['needles' => ['deposit', 'pay', 'payment'], 'answer' => '**Payment:** online orders may ask for a deposit based on shop settings. Walk-in and POS sales can be paid by cash, card, or transfer.'],
+            ['needles' => ['deposit', 'pay', 'payment', 'card', 'online'], 'answer' => '**Payment:** at checkout you can pay a deposit online, pay the full amount online, or choose pay later at pickup/delivery. Walk-in and POS sales can be paid by cash, card, or transfer.'],
             ['needles' => ['allergen', 'nut', 'gluten'], 'answer' => '**Allergens:** each cake page lists allergens when known. Tell us about nut, dairy, gluten, or egg allergies in the order notes so the kitchen can double-check.'],
             ['needles' => ['designer', 'customise', 'customize'], 'answer' => '**Designer:** use **Studio** to tap cards for type, tiers, flavour and finish, or **Describe it** to write a free-text prompt. Generate a preview, add notes, then add to cart.'],
         ];
@@ -156,7 +156,7 @@ class AssistantTools
         $lines = ['Here are cake ideas that fit what you asked:'];
 
         foreach ($cakes as $cake) {
-            $lines[] = "- **{$cake->name}** — {$cake->formattedPrice()} (lead {$cake->lead_days} day".($cake->lead_days === 1 ? '' : 's').')';
+            $lines[] = "- **{$cake->name}** - {$cake->formattedPrice()} (lead {$cake->lead_days} day".($cake->lead_days === 1 ? '' : 's').')';
         }
 
         $lines[] = '';

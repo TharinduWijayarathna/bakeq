@@ -42,10 +42,49 @@
                 <div class="flex justify-between gap-3"><dt class="text-muted-foreground">Add-ons</dt><dd>{{ \App\Support\Money::format($order->addons_total) }}</dd></div>
                 <div class="flex justify-between gap-3"><dt class="text-muted-foreground">Delivery / pickup</dt><dd>{{ \App\Support\Money::format($order->delivery_fee) }}</dd></div>
                 <div class="flex justify-between gap-3"><dt class="text-muted-foreground">Tax</dt><dd>{{ \App\Support\Money::format($order->tax_amount) }}</dd></div>
-                <div class="flex justify-between gap-3"><dt class="text-muted-foreground">Deposit</dt><dd>− {{ \App\Support\Money::format($order->deposit_paid) }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-muted-foreground">Deposit / paid</dt><dd>− {{ \App\Support\Money::format($order->deposit_paid) }}</dd></div>
                 <div class="flex justify-between gap-3 border-t border-border pt-2 text-base font-bold"><dt>Total due</dt><dd class="text-primary">{{ $order->formattedTotalDue() }}</dd></div>
             </dl>
         </div>
+    </div>
+
+    <div class="mt-4 rounded-4xl bg-card p-6 shadow-soft">
+        <h2 class="text-xl">Payment</h2>
+        <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+            <div>
+                <dt class="text-muted-foreground">Method</dt>
+                <dd class="font-semibold">{{ $order->payment_method?->label() ?? '—' }}</dd>
+            </div>
+            <div>
+                <dt class="text-muted-foreground">Status</dt>
+                <dd class="font-semibold">{{ $order->payment_status->label() }}</dd>
+            </div>
+            <div>
+                <dt class="text-muted-foreground">Amount paid online</dt>
+                <dd class="font-semibold">{{ $formattedPaymentAmount }}</dd>
+            </div>
+            <div>
+                <dt class="text-muted-foreground">Paid at</dt>
+                <dd class="font-semibold">{{ $order->paid_at?->toDayDateTimeString() ?? '—' }}</dd>
+            </div>
+            <div class="sm:col-span-2">
+                <dt class="text-muted-foreground">Payment reference</dt>
+                <dd class="font-mono text-xs">{{ $order->ipg_payment_id ?: ($order->ipg_checkout_id ?: '—') }}</dd>
+            </div>
+        </dl>
+        @error('payment')
+            <p class="mt-3 rounded-2xl bg-destructive/10 px-3 py-2 text-sm text-destructive">{{ $message }}</p>
+        @enderror
+        @if ($order->hasOutstandingBalance())
+            <button
+                type="button"
+                wire:click="markBalanceCollected"
+                wire:confirm="Mark the remaining balance as collected offline?"
+                class="mt-4 rounded-full bg-secondary px-5 py-2.5 text-sm font-bold text-secondary-foreground"
+            >
+                Mark balance collected
+            </button>
+        @endif
     </div>
 
     <ul class="mt-6 space-y-2 rounded-4xl bg-card p-6 shadow-soft">

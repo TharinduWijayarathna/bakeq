@@ -4,11 +4,13 @@ namespace App\Livewire\Admin;
 
 use App\Actions\AdjustInventoryForOrder;
 use App\Actions\GenerateInvoice;
+use App\Actions\MarkOrderBalanceCollected;
 use App\Enums\OrderStatus;
 use App\Enums\ProductionStatus;
 use App\Exceptions\InsufficientStockException;
 use App\Models\Order;
 use App\Support\AuditLogger;
+use App\Support\Money;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -68,10 +70,28 @@ class OrderShow extends Component
         session()->flash('status', 'Order status updated.');
     }
 
+    public function markBalanceCollected(MarkOrderBalanceCollected $markCollected): void
+    {
+        $this->authorize('update', $this->order);
+
+        $markCollected->handle($this->order);
+        $this->order->refresh()->load(['user', 'items', 'invoice']);
+
+        AuditLogger::record('order.balance_collected', $this->order, [
+            'payment_status' => $this->order->payment_status->value,
+        ], [
+            'payment_status' => 'paid',
+            'total_due' => 0,
+        ]);
+
+        session()->flash('status', 'Balance marked as collected.');
+    }
+
     public function render(): View
     {
         return view('livewire.admin.order-show', [
             'statuses' => OrderStatus::cases(),
+            'formattedPaymentAmount' => Money::format($this->order->payment_amount),
         ])->title('Order #'.$this->order->id);
     }
 }

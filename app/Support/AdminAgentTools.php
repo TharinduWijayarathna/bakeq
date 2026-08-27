@@ -248,7 +248,7 @@ class AdminAgentTools
                 'type' => 'OBJECT',
                 'properties' => [
                     'customer_id' => ['type' => 'INTEGER'],
-                    'payment_method' => ['type' => 'STRING', 'description' => 'cash|card|transfer|other'],
+                    'payment_method' => ['type' => 'STRING', 'description' => 'cash|card|transfer|online|pay_later|other'],
                     'notes' => ['type' => 'STRING'],
                     'cake_id' => ['type' => 'INTEGER', 'description' => 'Optional catalog cake'],
                     'item_name' => ['type' => 'STRING', 'description' => 'Ad-hoc line name when no cake_id'],
@@ -620,7 +620,7 @@ class AdminAgentTools
 
         return [
             'ok' => true,
-            'summary' => $cake->name.' — '.$cake->formattedPrice().' ('.($cake->is_active ? 'active' : 'inactive').').',
+            'summary' => $cake->name.' - '.$cake->formattedPrice().' ('.($cake->is_active ? 'active' : 'inactive').').',
             'data' => self::cakeBrief($cake),
         ];
     }
@@ -853,7 +853,7 @@ class AdminAgentTools
 
         return [
             'ok' => true,
-            'summary' => $customer->name.' ('.$customer->email.') — '.$customer->orders_count.' order(s).',
+            'summary' => $customer->name.' ('.$customer->email.') - '.$customer->orders_count.' order(s).',
             'data' => self::customerBrief($customer),
         ];
     }

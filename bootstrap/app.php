@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'staff.can' => EnsureStaffCan::class,
         ]);
 
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/ipg',
+        ]);
+
         $middleware->redirectGuestsTo(fn (): string => route('login'));
 
         $middleware->redirectUsersTo(function (): string {
