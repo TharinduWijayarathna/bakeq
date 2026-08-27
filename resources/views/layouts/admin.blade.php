@@ -10,16 +10,16 @@
     </head>
     <body class="admin-app min-h-screen bg-background text-foreground antialiased">
         <div class="flex min-h-screen">
-            <aside class="hidden w-64 shrink-0 border-r border-border bg-card lg:flex lg:flex-col">
-                <div class="h-1.5 bg-gradient-sweet" aria-hidden="true"></div>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-5 py-5">
+            <aside class="sticky top-0 hidden h-svh w-64 shrink-0 border-r border-border bg-card lg:flex lg:flex-col">
+                <div class="h-1.5 shrink-0 bg-gradient-sweet" aria-hidden="true"></div>
+                <a href="{{ route('admin.dashboard') }}" class="flex shrink-0 items-center gap-3 px-5 py-5">
                     <img src="{{ asset('images/logo-mark.png') }}" alt="" class="size-10 object-contain">
                     <div>
                         <p class="font-display text-lg font-bold leading-tight text-primary">{{ $brandShortName }}</p>
                         <p class="text-xs text-muted-foreground">{{ auth()->user()->role->label() }}</p>
                     </div>
                 </a>
-                <nav class="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-2 text-sm font-semibold">
+                <nav class="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-3 py-2 text-sm font-semibold">
                     @if (auth()->user()->canAccess('dashboard'))
                         <x-admin.nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" icon="layout">Dashboard</x-admin.nav-link>
                     @endif
@@ -40,9 +40,6 @@
                     @endif
                     @if (auth()->user()->canAccess('pos'))
                         <x-admin.nav-link :href="route('admin.pos')" :active="request()->routeIs('admin.pos')" icon="banknote">POS</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('order-assistant'))
-                        <x-admin.nav-link :href="route('admin.order-assistant')" :active="request()->routeIs('admin.order-assistant')" icon="message">Order AI</x-admin.nav-link>
                     @endif
                     @if (auth()->user()->canAccess('admin-agent'))
                         <x-admin.nav-link :href="route('admin.admin-agent')" :active="request()->routeIs('admin.admin-agent')" icon="sparkle">Admin Agent</x-admin.nav-link>
@@ -78,7 +75,7 @@
                         <x-admin.nav-link :href="route('admin.audit')" :active="request()->routeIs('admin.audit')" icon="clipboard">Audit</x-admin.nav-link>
                     @endif
                 </nav>
-                <div class="border-t border-border p-3">
+                <div class="shrink-0 border-t border-border p-3">
                     <a href="{{ route('home') }}" class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold text-muted-foreground hover:bg-muted">
                         <x-icon name="home" class="size-4" /> View store
                     </a>

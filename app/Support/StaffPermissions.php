@@ -63,7 +63,6 @@ class StaffPermissions
             str_starts_with($routeName, 'admin.recipes') => 'recipes',
             str_starts_with($routeName, 'admin.orders') => 'orders',
             $routeName === 'admin.pos' => 'pos',
-            $routeName === 'admin.order-assistant' => 'order-assistant',
             $routeName === 'admin.admin-agent' => 'admin-agent',
             $routeName === 'admin.production' => 'production',
             $routeName === 'admin.waste' => 'waste',

@@ -14,7 +14,6 @@ use App\Livewire\Admin\EmployeeIndex;
 use App\Livewire\Admin\GalleryManager;
 use App\Livewire\Admin\InventoryIndex;
 use App\Livewire\Admin\InvoiceIndex;
-use App\Livewire\Admin\OrderAssistant;
 use App\Livewire\Admin\OrderIndex as AdminOrderIndex;
 use App\Livewire\Admin\OrderShow as AdminOrderShow;
 use App\Livewire\Admin\PosTerminal;
@@ -97,7 +96,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::livewire('/pos', PosTerminal::class)->name('pos');
     });
     Route::middleware('staff.can:order-assistant')->group(function (): void {
-        Route::livewire('/order-assistant', OrderAssistant::class)->name('order-assistant');
+        Route::redirect('/order-assistant', '/admin/orders?tab=ai')->name('order-assistant');
     });
     Route::middleware('staff.can:admin-agent')->group(function (): void {
         Route::livewire('/agent', AdminAgentChat::class)->name('admin-agent');

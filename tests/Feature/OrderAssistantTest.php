@@ -1,12 +1,12 @@
 <?php
 
-use App\Livewire\Admin\OrderAssistant;
+use App\Livewire\Admin\OrderIndex;
 use App\Livewire\Admin\PosTerminal;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 
-test('order assistant extracts structured fields and prefills pos', function () {
+test('order ai tab extracts structured fields and prefills pos', function () {
     config(['services.gemini.key' => 'test-gemini-key']);
     Http::preventStrayRequests();
     Http::fake([
@@ -38,11 +38,12 @@ test('order assistant extracts structured fields and prefills pos', function () 
     $admin = adminUser();
 
     Livewire::actingAs($admin)
-        ->test(OrderAssistant::class)
-        ->set('message', 'Hi need a chocolate birthday cake for 15 people Saturday afternoon, budget 8000, pink flowers')
+        ->test(OrderIndex::class)
+        ->call('setTab', 'ai')
+        ->set('ai_message', 'Hi need a chocolate birthday cake for 15 people Saturday afternoon, budget 8000, pink flowers')
         ->call('extract')
         ->assertHasNoErrors()
-        ->assertSet('extracted', true)
+        ->assertSet('ai_extracted', true)
         ->assertSet('occasion', 'Birthday')
         ->assertSet('flavor', 'Chocolate')
         ->assertSet('budget', '8000')
@@ -64,7 +65,7 @@ test('order assistant extracts structured fields and prefills pos', function () 
         ->assertSet('lines.0.name', fn ($name) => str_contains($name, 'Birthday'));
 });
 
-test('order assistant falls back to manual fields when gemini fails', function () {
+test('order ai tab falls back to manual fields when ai fails', function () {
     config(['services.gemini.key' => 'test-gemini-key']);
     Http::preventStrayRequests();
     Http::fake([
@@ -72,18 +73,20 @@ test('order assistant falls back to manual fields when gemini fails', function (
     ]);
 
     Livewire::actingAs(adminUser())
-        ->test(OrderAssistant::class)
-        ->set('message', 'Need a vanilla wedding cake next Friday please')
+        ->test(OrderIndex::class)
+        ->call('setTab', 'ai')
+        ->set('ai_message', 'Need a vanilla wedding cake next Friday please')
         ->call('extract')
-        ->assertSet('extracted', true)
-        ->assertSet('failed', true)
+        ->assertSet('ai_extracted', true)
+        ->assertSet('ai_failed', true)
         ->assertSet('style_notes', 'Need a vanilla wedding cake next Friday please')
-        ->assertHasErrors('message');
+        ->assertHasErrors('ai_message');
 });
 
-test('admins can open the order assistant page', function () {
+test('orders page includes the order ai tab for admins', function () {
     $this->actingAs(adminUser())
-        ->get(route('admin.order-assistant'))
+        ->get(route('admin.orders.index', ['tab' => 'ai']))
         ->assertOk()
-        ->assertSee('Order Assistant');
+        ->assertSee('Order AI')
+        ->assertSee('Customer message');
 });
