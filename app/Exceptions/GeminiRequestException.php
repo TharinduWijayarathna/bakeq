@@ -19,7 +19,7 @@ class GeminiRequestException extends Exception
         $apiMessage = $response->json('error.message') ?? $response->body();
 
         return new self(
-            'Gemini request failed: '.mb_substr((string) $apiMessage, 0, 300),
+            'AI request failed: '.mb_substr((string) $apiMessage, 0, 300),
             $response->status(),
         );
     }

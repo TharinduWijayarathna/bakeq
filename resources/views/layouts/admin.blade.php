@@ -44,6 +44,9 @@
                     @if (auth()->user()->canAccess('order-assistant'))
                         <x-admin.nav-link :href="route('admin.order-assistant')" :active="request()->routeIs('admin.order-assistant')" icon="message">Order AI</x-admin.nav-link>
                     @endif
+                    @if (auth()->user()->canAccess('admin-agent'))
+                        <x-admin.nav-link :href="route('admin.admin-agent')" :active="request()->routeIs('admin.admin-agent')" icon="sparkle">Admin Agent</x-admin.nav-link>
+                    @endif
                     @if (auth()->user()->canAccess('production'))
                         <x-admin.nav-link :href="route('admin.production')" :active="request()->routeIs('admin.production')" icon="layers">Production</x-admin.nav-link>
                     @endif

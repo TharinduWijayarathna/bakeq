@@ -344,6 +344,11 @@
 .markdown-answer {
     font-size: 0.9375rem;
     line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.markdown-answer :where(p) {
+    margin: 0;
 }
 
 .markdown-answer :where(p + p) {
@@ -355,6 +360,12 @@
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.25;
+    margin-top: 0.85rem;
+    margin-bottom: 0.35rem;
+}
+
+.markdown-answer :where(h1:first-child, h2:first-child, h3:first-child, h4:first-child, p:first-child) {
+    margin-top: 0;
 }
 
 .markdown-answer :where(h1, h2) {
@@ -367,6 +378,7 @@
 
 .markdown-answer :where(ul, ol) {
     margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
     padding-left: 1.25rem;
 }
 
@@ -382,9 +394,17 @@
     margin-top: 0.25rem;
 }
 
+.markdown-answer :where(li > ul, li > ol) {
+    margin-top: 0.25rem;
+}
+
 .markdown-answer :where(strong) {
     font-weight: 700;
     color: var(--foreground);
+}
+
+.markdown-answer :where(em) {
+    font-style: italic;
 }
 
 .markdown-answer :where(a) {
@@ -396,9 +416,23 @@
 
 .markdown-answer :where(code) {
     border-radius: 0.4rem;
-    background: var(--muted);
+    background: color-mix(in oklab, var(--foreground) 8%, transparent);
     padding: 0.1rem 0.35rem;
     font-size: 0.85em;
+}
+
+.markdown-answer :where(pre) {
+    margin-top: 0.75rem;
+    overflow-x: auto;
+    border-radius: 0.85rem;
+    background: color-mix(in oklab, var(--foreground) 8%, transparent);
+    padding: 0.85rem 1rem;
+}
+
+.markdown-answer :where(pre code) {
+    background: transparent;
+    padding: 0;
+    font-size: 0.8rem;
 }
 
 .markdown-answer :where(blockquote) {
@@ -406,6 +440,35 @@
     border-left: 3px solid var(--primary);
     padding-left: 0.85rem;
     color: var(--muted-foreground);
+}
+
+.markdown-answer :where(hr) {
+    margin: 0.9rem 0;
+    border: 0;
+    border-top: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+}
+
+.markdown-answer :where(table) {
+    width: 100%;
+    margin-top: 0.75rem;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.markdown-answer :where(th, td) {
+    border: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+    padding: 0.45rem 0.6rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+.markdown-answer :where(th) {
+    font-weight: 700;
+    background: color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+
+.markdown-answer :where(tr:nth-child(even) td) {
+    background: color-mix(in oklab, var(--foreground) 3%, transparent);
 }
 
 .admin-app {

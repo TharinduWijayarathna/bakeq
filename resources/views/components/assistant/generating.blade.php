@@ -1,10 +1,15 @@
+@props([
+    'target' => 'ask,askSuggestion',
+    'title' => 'Finding a short answer',
+])
+
 <div
     wire:loading.flex
-    wire:target="ask,askSuggestion"
+    wire:target="{{ $target }}"
     {{ $attributes->class('absolute inset-0 z-10 items-center justify-center overflow-hidden bg-card/92 px-6 text-center backdrop-blur-md') }}
     role="status"
     aria-live="polite"
-    aria-label="Finding a short answer"
+    aria-label="{{ $title }}"
 >
     <div class="relative w-full max-w-[16rem]">
         <span class="absolute left-6 top-4 size-2.5 animate-sparkle-twinkle rounded-full bg-primary delay-100"></span>
@@ -15,7 +20,7 @@
             <x-icon name="sparkle" class="size-7 animate-cake-float" />
         </div>
 
-        <p class="mt-4 font-display text-lg font-bold">Finding a short answer</p>
+        <p class="mt-4 font-display text-lg font-bold">{{ $title }}</p>
         <p class="relative mx-auto mt-1 h-6 overflow-hidden text-sm leading-6 text-muted-foreground">
             <span class="absolute inset-x-0 top-0 animate-bake-status">Reading your question…</span>
             <span class="absolute inset-x-0 top-0 animate-bake-status opacity-0" style="animation-delay: 2.2s">Checking cake basics…</span>

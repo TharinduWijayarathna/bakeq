@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class AssistantTools
 {
     /**
-     * Try to handle a structured assistant request before falling back to Gemini.
+     * Try to handle a structured assistant request before falling back to AI.
      *
      * @return array{handled: bool, answer: string|null}
      */

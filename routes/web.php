@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\InvoiceDownloadController;
+use App\Livewire\Admin\AdminAgentChat;
 use App\Livewire\Admin\AuditLogIndex;
 use App\Livewire\Admin\CakeForm;
 use App\Livewire\Admin\CakeIndex as AdminCakeIndex;
@@ -97,6 +98,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     });
     Route::middleware('staff.can:order-assistant')->group(function (): void {
         Route::livewire('/order-assistant', OrderAssistant::class)->name('order-assistant');
+    });
+    Route::middleware('staff.can:admin-agent')->group(function (): void {
+        Route::livewire('/agent', AdminAgentChat::class)->name('admin-agent');
     });
     Route::middleware('staff.can:production')->group(function (): void {
         Route::livewire('/production', ProductionBoard::class)->name('production');

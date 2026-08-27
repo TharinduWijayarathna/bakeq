@@ -2,6 +2,16 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('lazyImage', () => ({
         loaded: false,
         init() {
+            this.syncLoaded();
+
+            this.$el.addEventListener('load', () => {
+                this.loaded = true;
+            });
+
+            // Livewire morph can remount Alpine on cached images that never fire "load" again.
+            queueMicrotask(() => this.syncLoaded());
+        },
+        syncLoaded() {
             if (this.$el.complete && this.$el.naturalWidth > 0) {
                 this.loaded = true;
             }
@@ -29,6 +39,28 @@ document.addEventListener('alpine:init', () => {
             el.classList.add('reveal-scale');
         }
 
+        let revealed = false;
+
+        const show = () => {
+            revealed = true;
+            el.classList.add('is-visible');
+        };
+
+        const restore = () => {
+            if (revealed) {
+                el.classList.add('is-visible');
+
+                return;
+            }
+
+            const rect = el.getBoundingClientRect();
+            const inView = rect.bottom > 0 && rect.top < (window.innerHeight || document.documentElement.clientHeight);
+
+            if (inView) {
+                show();
+            }
+        };
+
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -36,7 +68,7 @@ document.addEventListener('alpine:init', () => {
                         return;
                     }
 
-                    el.classList.add('is-visible');
+                    show();
                     observer.unobserve(el);
                 });
             },
@@ -48,6 +80,62 @@ document.addEventListener('alpine:init', () => {
 
         observer.observe(el);
 
-        cleanup(() => observer.disconnect());
+        // Livewire morph resets class attributes from server HTML, which removes
+        // Alpine's is-visible and leaves content stuck at opacity: 0.
+        const onMorphed = () => queueMicrotask(restore);
+
+        document.addEventListener('livewire:navigated', onMorphed);
+
+        let removeMorphHook = () => {};
+
+        const registerMorphHook = () => {
+            if (! window.Livewire?.hook) {
+                return;
+            }
+
+            removeMorphHook = Livewire.hook('morphed', ({ el: root }) => {
+                if (root === el || root.contains(el)) {
+                    onMorphed();
+                }
+            });
+        };
+
+        if (window.Livewire) {
+            registerMorphHook();
+        } else {
+            document.addEventListener('livewire:init', registerMorphHook, { once: true });
+        }
+
+        cleanup(() => {
+            observer.disconnect();
+            document.removeEventListener('livewire:navigated', onMorphed);
+            removeMorphHook();
+        });
+    });
+});
+
+document.addEventListener('livewire:init', () => {
+    Livewire.hook('morphed', () => {
+        queueMicrotask(() => {
+            document.querySelectorAll('.reveal').forEach((el) => {
+                if (el.classList.contains('is-visible')) {
+                    return;
+                }
+
+                const rect = el.getBoundingClientRect();
+                const inView = rect.bottom > 0 && rect.top < (window.innerHeight || document.documentElement.clientHeight);
+
+                if (inView) {
+                    el.classList.add('is-visible');
+                }
+            });
+
+            document.querySelectorAll('[x-data="lazyImage"]').forEach((el) => {
+                if (el.complete && el.naturalWidth > 0) {
+                    el.classList.remove('opacity-0');
+                    el.classList.add('opacity-100');
+                }
+            });
+        });
     });
 });

@@ -2,7 +2,7 @@
     <p class="font-script text-3xl text-primary">Inbox</p>
     <h1 class="mt-1 text-4xl">Order Assistant</h1>
     <p class="mt-2 max-w-2xl text-sm text-muted-foreground">
-        Paste a WhatsApp, SMS, or email message. Gemini extracts the cake details into an editable form, then you send them to POS.
+        Paste a WhatsApp, SMS, or email message. AI extracts the cake details into an editable form, then you send them to POS.
     </p>
     <x-flash />
 
