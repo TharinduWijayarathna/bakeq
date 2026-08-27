@@ -23,59 +23,59 @@
                     @if (auth()->user()->canAccess('dashboard'))
                         <x-admin.nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" icon="layout">Dashboard</x-admin.nav-link>
                     @endif
+                    @if (auth()->user()->canAccess('categories'))
+                    <x-admin.nav-link :href="route('admin.categories')" :active="request()->routeIs('admin.categories')" icon="tag">Categories</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('cakes'))
+                    <x-admin.nav-link :href="route('admin.cakes.index')" :active="request()->routeIs('admin.cakes.*')" icon="cake">Cakes</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('inventory'))
+                    <x-admin.nav-link :href="route('admin.inventory')" :active="request()->routeIs('admin.inventory')" icon="layers">Inventory</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('recipes'))
+                    <x-admin.nav-link :href="route('admin.recipes.index')" :active="request()->routeIs('admin.recipes.*')" icon="clipboard">Recipes</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('orders'))
+                    <x-admin.nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')" icon="package">Orders</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('pos'))
+                    <x-admin.nav-link :href="route('admin.pos')" :active="request()->routeIs('admin.pos')" icon="banknote">POS</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('admin-agent'))
+                    <x-admin.nav-link :href="route('admin.admin-agent')" :active="request()->routeIs('admin.admin-agent')" icon="sparkle">Admin Agent</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('production'))
+                    <x-admin.nav-link :href="route('admin.production')" :active="request()->routeIs('admin.production')" icon="layers">Production</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('waste'))
+                    <x-admin.nav-link :href="route('admin.waste')" :active="request()->routeIs('admin.waste')" icon="trash">Waste</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('invoices'))
+                    <x-admin.nav-link :href="route('admin.invoices.index')" :active="request()->routeIs('admin.invoices.*')" icon="clipboard">Invoices</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('designer'))
+                    <x-admin.nav-link :href="route('admin.designer')" :active="request()->routeIs('admin.designer')" icon="wand">Designer</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('gallery'))
+                    <x-admin.nav-link :href="route('admin.gallery')" :active="request()->routeIs('admin.gallery')" icon="image">Gallery</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('testimonials'))
+                    <x-admin.nav-link :href="route('admin.testimonials')" :active="request()->routeIs('admin.testimonials')" icon="message">Testimonials</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('customers'))
+                    <x-admin.nav-link :href="route('admin.customers')" :active="request()->routeIs('admin.customers*')" icon="users">Customers</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('employees'))
+                    <x-admin.nav-link :href="route('admin.employees')" :active="request()->routeIs('admin.employees')" icon="users">Employees</x-admin.nav-link>
+                    @endif
+                    @if (auth()->user()->canAccess('shifts'))
+                    <x-admin.nav-link :href="route('admin.shifts')" :active="request()->routeIs('admin.shifts')" icon="settings">Shifts</x-admin.nav-link>
+                    @endif
                     @if (auth()->user()->canAccess('reports'))
                         <x-admin.nav-link :href="route('admin.reports.index')" :active="request()->routeIs('admin.reports.*')" icon="chart">Reports</x-admin.nav-link>
                     @endif
-                    @if (auth()->user()->canAccess('categories'))
-                        <x-admin.nav-link :href="route('admin.categories')" :active="request()->routeIs('admin.categories')" icon="tag">Categories</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('cakes'))
-                        <x-admin.nav-link :href="route('admin.cakes.index')" :active="request()->routeIs('admin.cakes.*')" icon="cake">Cakes</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('inventory'))
-                        <x-admin.nav-link :href="route('admin.inventory')" :active="request()->routeIs('admin.inventory')" icon="layers">Inventory</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('recipes'))
-                        <x-admin.nav-link :href="route('admin.recipes.index')" :active="request()->routeIs('admin.recipes.*')" icon="clipboard">Recipes</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('orders'))
-                        <x-admin.nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')" icon="package">Orders</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('pos'))
-                        <x-admin.nav-link :href="route('admin.pos')" :active="request()->routeIs('admin.pos')" icon="banknote">POS</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('admin-agent'))
-                        <x-admin.nav-link :href="route('admin.admin-agent')" :active="request()->routeIs('admin.admin-agent')" icon="sparkle">Admin Agent</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('production'))
-                        <x-admin.nav-link :href="route('admin.production')" :active="request()->routeIs('admin.production')" icon="layers">Production</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('waste'))
-                        <x-admin.nav-link :href="route('admin.waste')" :active="request()->routeIs('admin.waste')" icon="trash">Waste</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('invoices'))
-                        <x-admin.nav-link :href="route('admin.invoices.index')" :active="request()->routeIs('admin.invoices.*')" icon="clipboard">Invoices</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('designer'))
-                        <x-admin.nav-link :href="route('admin.designer')" :active="request()->routeIs('admin.designer')" icon="wand">Designer</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('gallery'))
-                        <x-admin.nav-link :href="route('admin.gallery')" :active="request()->routeIs('admin.gallery')" icon="image">Gallery</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('testimonials'))
-                        <x-admin.nav-link :href="route('admin.testimonials')" :active="request()->routeIs('admin.testimonials')" icon="message">Testimonials</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('customers'))
-                        <x-admin.nav-link :href="route('admin.customers')" :active="request()->routeIs('admin.customers*')" icon="users">Customers</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('employees'))
-                        <x-admin.nav-link :href="route('admin.employees')" :active="request()->routeIs('admin.employees')" icon="users">Employees</x-admin.nav-link>
-                    @endif
-                    @if (auth()->user()->canAccess('shifts'))
-                        <x-admin.nav-link :href="route('admin.shifts')" :active="request()->routeIs('admin.shifts')" icon="settings">Shifts</x-admin.nav-link>
-                    @endif
                     @if (auth()->user()->canAccess('audit'))
-                        <x-admin.nav-link :href="route('admin.audit')" :active="request()->routeIs('admin.audit')" icon="clipboard">Audit</x-admin.nav-link>
+                    <x-admin.nav-link :href="route('admin.audit')" :active="request()->routeIs('admin.audit')" icon="clipboard">Audit</x-admin.nav-link>
                     @endif
                 </nav>
                 <div class="shrink-0 border-t border-border p-3">
