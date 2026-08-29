@@ -46,6 +46,11 @@ class DatabaseSeeder extends Seeder
             CakeSeeder::class,
             DesignerSeeder::class,
             TestimonialSeeder::class,
+            GalleryPhotoSeeder::class,
+            SocialPostSeeder::class,
+            IngredientSeeder::class,
+            RecipeSeeder::class,
+            OrderSeeder::class,
         ]);
 
         ShopSetting::current();

@@ -11,10 +11,12 @@ test('managers can schedule a shift for staff', function () {
     $manager = User::factory()->manager()->create();
     $baker = User::factory()->baker()->create();
 
+    $tomorrow = now()->addDay();
+
     Livewire::actingAs($manager)
         ->test(ShiftIndex::class)
         ->set('user_id', $baker->id)
-        ->set('date', now()->toDateString())
+        ->set('date', $tomorrow->toDateString())
         ->set('starts_at_time', '08:00')
         ->set('ends_at_time', '14:00')
         ->set('schedule_notes', 'Morning bake')
@@ -32,10 +34,12 @@ test('bakers cannot schedule shifts', function () {
     $baker = User::factory()->baker()->create();
     $other = User::factory()->cashier()->create();
 
+    $tomorrow = now()->addDay();
+
     Livewire::actingAs($baker)
         ->test(ShiftIndex::class)
         ->set('user_id', $other->id)
-        ->set('date', now()->toDateString())
+        ->set('date', $tomorrow->toDateString())
         ->set('starts_at_time', '08:00')
         ->set('ends_at_time', '14:00')
         ->call('createShift')
@@ -79,15 +83,17 @@ test('overlapping shifts are rejected', function () {
     $manager = User::factory()->manager()->create();
     $baker = User::factory()->baker()->create();
 
+    $tomorrow = now()->addDay();
+
     Shift::factory()->forUser($baker)->scheduled()->create([
-        'starts_at' => now()->setTime(8, 0),
-        'ends_at' => now()->setTime(14, 0),
+        'starts_at' => $tomorrow->copy()->setTime(8, 0),
+        'ends_at' => $tomorrow->copy()->setTime(14, 0),
     ]);
 
     Livewire::actingAs($manager)
         ->test(ShiftIndex::class)
         ->set('user_id', $baker->id)
-        ->set('date', now()->toDateString())
+        ->set('date', $tomorrow->toDateString())
         ->set('starts_at_time', '10:00')
         ->set('ends_at_time', '16:00')
         ->call('createShift')
